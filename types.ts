@@ -38,8 +38,3 @@ export interface HistoryItem {
 }
 
 export type Language = 'hu' | 'en';
-
-export interface AiAdviceResponse {
-  advice: string;
-  sentiment: 'positive' | 'negative' | 'neutral' | 'warning';
-}
