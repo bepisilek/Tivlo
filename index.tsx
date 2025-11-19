@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { LanguageProvider } from './contexts/LanguageContext';
+import { registerServiceWorker } from './registerServiceWorker';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -16,3 +17,5 @@ root.render(
     </LanguageProvider>
   </React.StrictMode>
 );
+
+registerServiceWorker();
