@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { Button } from './Button';
 import { useLanguage } from '../contexts/LanguageContext';
-import { Mail, Lock, AlertCircle, CheckCircle } from 'lucide-react';
+import { Mail, Lock, AlertCircle, CheckCircle, Check } from 'lucide-react';
 
 interface AuthScreenProps {
   onAuthSuccess: () => void;
@@ -14,6 +14,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [marketingOptIn, setMarketingOptIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,7 +39,6 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
           password,
         });
         if (error) {
-          // Friendly error messages
           if (error.message.includes('Invalid login credentials') || error.message.includes('Invalid')) {
             throw new Error(t('auth_invalid_credentials'));
           } else if (error.message.includes('Email not confirmed')) {
@@ -46,14 +46,16 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
           }
           throw error;
         }
-        // onAuthSuccess will be handled by the onAuthStateChange in App.tsx
       } else {
-        // REGISTRATION
+        // REGISTRATION WITH MARKETING OPT-IN
         const { error, data } = await supabase.auth.signUp({
           email,
           password,
           options: {
             emailRedirectTo: `${window.location.origin}`,
+            data: {
+              marketing_opt_in: marketingOptIn // Metadata a signup-hoz
+            }
           }
         });
         
@@ -64,14 +66,22 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
           throw error;
         }
         
-        // If email confirmation is enabled in Supabase, user might not be signed in yet
+        // Ha sikeres a regisztráció, mentsük el a marketing opt-in-t
+        if (data.user) {
+          // A profile már létrejött a trigger által, csak frissítjük
+          await supabase
+            .from('profiles')
+            .update({ marketing_opt_in: marketingOptIn })
+            .eq('id', data.user.id);
+        }
+        
         if (data.user && !data.session) {
             setMessage(t('auth_confirmation_sent'));
             setEmail('');
             setPassword('');
             setConfirmPassword('');
+            setMarketingOptIn(false);
         } else if (data.session) {
-          // Auto-login enabled, session created
           setMessage(t('auth_registration_success'));
         }
       }
@@ -147,20 +157,47 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                 />
             </div>
             {!isLogin && (
-              <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                    <Lock size={20} />
-                  </div>
-                  <input
-                    type="password"
-                    required
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="block w-full pl-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-4 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm"
-                    placeholder={t('auth_confirm_password')}
-                    minLength={6}
-                  />
-              </div>
+              <>
+                <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                      <Lock size={20} />
+                    </div>
+                    <input
+                      type="password"
+                      required
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="block w-full pl-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-4 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm"
+                      placeholder={t('auth_confirm_password')}
+                      minLength={6}
+                    />
+                </div>
+                
+                {/* MARKETING OPT-IN CHECKBOX */}
+                <div className="bg-slate-50 dark:bg-slate-900 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                  <label className="flex items-start gap-3 cursor-pointer group">
+                    <div className="relative flex items-center justify-center mt-0.5">
+                      <input
+                        type="checkbox"
+                        checked={marketingOptIn}
+                        onChange={(e) => setMarketingOptIn(e.target.checked)}
+                        className="sr-only peer"
+                      />
+                      <div className="w-5 h-5 border-2 border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 peer-checked:bg-blue-600 peer-checked:border-blue-600 transition-all flex items-center justify-center">
+                        {marketingOptIn && <Check size={14} className="text-white" />}
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <span className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                        {t('marketing_opt_in_text')}
+                      </span>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                        {t('marketing_opt_in_subtitle')}
+                      </p>
+                    </div>
+                  </label>
+                </div>
+              </>
             )}
           </div>
 
@@ -203,6 +240,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                 setError(null);
                 setMessage(null);
                 setConfirmPassword('');
+                setMarketingOptIn(false);
             }}
             className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 transition-colors"
           >
