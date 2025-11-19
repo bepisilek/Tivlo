@@ -28,6 +28,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
     try {
       if (!isLogin && password !== confirmPassword) {
         setError(t('auth_password_mismatch'));
+        setIsLoading(false);
         return;
       }
 
@@ -36,18 +37,42 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
           email,
           password,
         });
-        if (error) throw error;
+        if (error) {
+          // Friendly error messages
+          if (error.message.includes('Invalid login credentials') || error.message.includes('Invalid')) {
+            throw new Error(t('auth_invalid_credentials'));
+          } else if (error.message.includes('Email not confirmed')) {
+            throw new Error(t('auth_email_not_confirmed'));
+          }
+          throw error;
+        }
         // onAuthSuccess will be handled by the onAuthStateChange in App.tsx
       } else {
+        // REGISTRATION
         const { error, data } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+            emailRedirectTo: `${window.location.origin}`,
+          }
         });
-        if (error) throw error;
+        
+        if (error) {
+          if (error.message.includes('already registered') || error.message.includes('already been registered')) {
+            throw new Error(t('auth_email_already_exists'));
+          }
+          throw error;
+        }
         
         // If email confirmation is enabled in Supabase, user might not be signed in yet
         if (data.user && !data.session) {
-            setMessage(t('auth_magic_link_sent'));
+            setMessage(t('auth_confirmation_sent'));
+            setEmail('');
+            setPassword('');
+            setConfirmPassword('');
+        } else if (data.session) {
+          // Auto-login enabled, session created
+          setMessage(t('auth_registration_success'));
         }
       }
     } catch (err: any) {
