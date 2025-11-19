@@ -28,10 +28,15 @@ export const translations = {
     auth_switch_to_login: 'Van már fiókod? Jelentkezz be!',
     auth_error: 'Hiba történt. Ellenőrizd az adatokat.',
     auth_magic_link_sent: 'Ellenőrizd az email fiókodat a megerősítő linkért!',
+    auth_confirmation_sent: 'Regisztráció sikeres! Ellenőrizd az emailedet a megerősítő linkért.',
+    auth_registration_success: 'Sikeres regisztráció! Üdvözlünk!',
     auth_forgot_password: 'Elfelejtetted a jelszavad?',
     auth_reset_email_required: 'Add meg az email címed a jelszó visszaállításához.',
     auth_reset_email_sent: 'Ellenőrizd az emailed a jelszó-visszaállító linkért.',
     auth_password_mismatch: 'A két jelszó nem egyezik.',
+    auth_invalid_credentials: 'Hibás email vagy jelszó.',
+    auth_email_not_confirmed: 'Az email címed még nincs megerősítve. Ellenőrizd a postaládád!',
+    auth_email_already_exists: 'Ez az email cím már regisztrálva van. Próbálj bejelentkezni!',
     auth_logout: 'Kijelentkezés',
 
     // Tour
@@ -173,10 +178,15 @@ export const translations = {
     auth_switch_to_login: 'Have an account? Sign in!',
     auth_error: 'An error occurred. Please check your details.',
     auth_magic_link_sent: 'Check your email for the confirmation link!',
+    auth_confirmation_sent: 'Registration successful! Check your email to confirm your account.',
+    auth_registration_success: 'Successfully registered! Welcome!',
     auth_forgot_password: 'Forgot your password?',
     auth_reset_email_required: 'Enter your email to reset your password.',
     auth_reset_email_sent: 'Check your email for the reset link.',
     auth_password_mismatch: 'Passwords do not match.',
+    auth_invalid_credentials: 'Invalid email or password.',
+    auth_email_not_confirmed: 'Your email is not confirmed yet. Check your inbox!',
+    auth_email_already_exists: 'This email is already registered. Try logging in!',
     auth_logout: 'Log Out',
 
     // Tour
