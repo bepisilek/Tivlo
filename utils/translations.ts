@@ -38,6 +38,17 @@ export const translations = {
     auth_email_not_confirmed: 'Az email címed még nincs megerősítve. Ellenőrizd a postaládád!',
     auth_email_already_exists: 'Ez az email cím már regisztrálva van. Próbálj bejelentkezni!',
     auth_logout: 'Kijelentkezés',
+    
+    // Marketing Opt-in
+    marketing_opt_in_text: 'Szeretnék hírlevelet és speciális ajánlatokat kapni emailben.',
+    marketing_opt_in_subtitle: 'Bármikor leiratkozhatsz. Adataid biztonságban vannak.',
+    marketing_settings_title: 'Marketing Beállítások',
+    marketing_status_opted_in: 'Feliratkozva a hírlevelekre',
+    marketing_status_opted_out: 'Nincs feliratkozva',
+    marketing_change_consent: 'Hozzájárulás módosítása',
+    marketing_unsubscribe: 'Leiratkozás',
+    marketing_subscribe: 'Feliratkozás',
+    marketing_consent_updated: 'Marketing beállításaid frissítve!',
 
     // Tour
     tour_welcome_title: 'Üdvözöl a Tivlo!',
@@ -188,6 +199,17 @@ export const translations = {
     auth_email_not_confirmed: 'Your email is not confirmed yet. Check your inbox!',
     auth_email_already_exists: 'This email is already registered. Try logging in!',
     auth_logout: 'Log Out',
+    
+    // Marketing Opt-in
+    marketing_opt_in_text: 'I want to receive newsletters and special offers via email.',
+    marketing_opt_in_subtitle: 'You can unsubscribe at any time. Your data is safe.',
+    marketing_settings_title: 'Marketing Settings',
+    marketing_status_opted_in: 'Subscribed to newsletters',
+    marketing_status_opted_out: 'Not subscribed',
+    marketing_change_consent: 'Change consent',
+    marketing_unsubscribe: 'Unsubscribe',
+    marketing_subscribe: 'Subscribe',
+    marketing_consent_updated: 'Marketing settings updated!',
 
     // Tour
     tour_welcome_title: 'Welcome to Tivlo!',
