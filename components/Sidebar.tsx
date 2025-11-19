@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, User, Moon, Sun, LogOut } from 'lucide-react';
+import { X, User, Moon, Sun, LogOut, KeyRound } from 'lucide-react';
 import { UserSettings } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 import { supabase } from '../lib/supabaseClient';
@@ -8,11 +8,12 @@ interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
   onOpenProfile: () => void;
+  onOpenResetPassword: () => void;
   settings: UserSettings;
   toggleTheme: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenProfile, settings, toggleTheme }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenProfile, onOpenResetPassword, settings, toggleTheme }) => {
   const { t } = useLanguage();
 
   const handleLogout = async () => {
@@ -55,12 +56,20 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenProfile
               </div>
           </div>
 
-          <button 
+          <button
             onClick={() => { onOpenProfile(); onClose(); }}
             className="w-full flex items-center gap-3 p-3 text-slate-700 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 rounded-xl transition-colors"
           >
             <User size={20} />
             <span className="font-medium">{t('menu_edit_profile')}</span>
+          </button>
+
+          <button
+            onClick={() => { onOpenResetPassword(); onClose(); }}
+            className="w-full flex items-center gap-3 p-3 text-slate-700 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 rounded-xl transition-colors"
+          >
+            <KeyRound size={20} />
+            <span className="font-medium">{t('menu_reset_password')}</span>
           </button>
 
           <button 

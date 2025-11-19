@@ -23,7 +23,8 @@ export enum ViewState {
   HISTORY = 'HISTORY',
   SETTINGS = 'SETTINGS',
   LEVELS = 'LEVELS',
-  STATISTICS = 'STATISTICS'
+  STATISTICS = 'STATISTICS',
+  RESET_PASSWORD = 'RESET_PASSWORD'
 }
 
 export interface HistoryItem {

@@ -71,7 +71,15 @@ export const translations = {
     save_settings_btn: 'Beállítások Mentése',
     menu_profile: 'Jelenlegi profil',
     menu_edit_profile: 'Profil szerkesztése',
-    
+    menu_reset_password: 'Jelszó visszaállítása',
+
+    // Reset Password
+    reset_password_title: 'Jelszó visszaállítása',
+    reset_password_desc: 'Add meg az új jelszót, hogy biztonságban folytathasd az app használatát.',
+    reset_password_button: 'Új jelszó mentése',
+    reset_password_success: 'A jelszavad frissítve lett.',
+    reset_password_mismatch: 'A megadott jelszavak nem egyeznek.',
+
     // Calculator
     hourly_rate: 'Órabéred',
     what_to_buy: 'Mit szeretnél venni?',
@@ -208,6 +216,14 @@ export const translations = {
     save_settings_btn: 'Save Settings',
     menu_profile: 'Current Profile',
     menu_edit_profile: 'Edit Profile',
+    menu_reset_password: 'Reset password',
+
+    // Reset Password
+    reset_password_title: 'Reset password',
+    reset_password_desc: 'Set a new password to keep your account secure.',
+    reset_password_button: 'Save new password',
+    reset_password_success: 'Your password has been updated.',
+    reset_password_mismatch: 'The passwords do not match.',
 
     // Calculator
     hourly_rate: 'Hourly Rate',
