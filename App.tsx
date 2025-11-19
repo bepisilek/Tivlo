@@ -53,6 +53,7 @@ const App: React.FC = () => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      console.log('Auth state change:', _event, session);
       setSession(session);
       if (session) {
         fetchUserData(session.user.id);
@@ -68,14 +69,28 @@ const App: React.FC = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Detect password recovery from URL
+  // Detect password recovery from URL - IMPROVED
   useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const hashParams = new URLSearchParams(window.location.hash.replace('#', ''));
-    const type = searchParams.get('type') || hashParams.get('type');
+    // Check both regular query params and hash fragments
+    const urlParams = new URLSearchParams(window.location.search);
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    
+    // Supabase sends tokens in hash fragment
+    const type = urlParams.get('type') || hashParams.get('type');
+    const accessToken = hashParams.get('access_token');
+    const refreshToken = hashParams.get('refresh_token');
 
-    if (type === 'recovery') {
+    console.log('URL Check:', { type, hasAccessToken: !!accessToken, hasRefreshToken: !!refreshToken });
+
+    if (type === 'recovery' && accessToken) {
+      // User clicked password reset link
       setViewState(ViewState.RESET_PASSWORD);
+      // Clean URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (type === 'signup' || (type === 'email' && accessToken)) {
+      // Email confirmation link clicked
+      console.log('Email confirmation detected');
+      // Supabase will auto-handle the session, just clean URL
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, [session]);
@@ -106,7 +121,9 @@ const App: React.FC = () => {
         // 2. Fetch History
         const { data: historyData, error: historyError } = await supabase
             .from('history')
-            .select('*');
+            .select('*')
+            .eq('user_id', userId)
+            .order('date', { ascending: false });
             
         if (historyError) {
              console.error('Error fetching history:', historyError);
@@ -245,7 +262,7 @@ const App: React.FC = () => {
                 date: data.date,
                 adviceUsed: data.advice_used
               };
-              setHistory(prev => [...prev, newItem]);
+              setHistory(prev => [newItem, ...prev]);
           }
 
       } catch (error) {
