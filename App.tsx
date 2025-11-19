@@ -11,6 +11,7 @@ import { Sidebar } from './components/Sidebar';
 import { WelcomeScreen } from './components/WelcomeScreen';
 import { AuthScreen } from './components/AuthScreen';
 import { OnboardingTour } from './components/OnboardingTour';
+import { ResetPassword } from './components/ResetPassword';
 import { UserSettings, ViewState, HistoryItem } from './types';
 import { useLanguage } from './contexts/LanguageContext';
 
@@ -66,6 +67,18 @@ const App: React.FC = () => {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // Detect password recovery from URL
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const hashParams = new URLSearchParams(window.location.hash.replace('#', ''));
+    const type = searchParams.get('type') || hashParams.get('type');
+
+    if (type === 'recovery') {
+      setViewState(ViewState.RESET_PASSWORD);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [session]);
 
   // Apply Theme Effect
   useEffect(() => {
@@ -257,6 +270,15 @@ const App: React.FC = () => {
       setViewState(ViewState.SETTINGS);
   };
 
+  const handleOpenResetPassword = () => {
+      setPreviousView(viewState);
+      setViewState(ViewState.RESET_PASSWORD);
+  };
+
+  const handleResetSuccess = () => {
+      setViewState(previousView === ViewState.RESET_PASSWORD ? ViewState.CALCULATOR : previousView);
+  };
+
   const handleMenuClick = () => {
     setIsSidebarOpen(true);
   };
@@ -267,6 +289,7 @@ const App: React.FC = () => {
       case ViewState.HISTORY: return t('nav_history');
       case ViewState.LEVELS: return t('nav_levels');
       case ViewState.STATISTICS: return t('nav_statistics');
+      case ViewState.RESET_PASSWORD: return t('reset_password_title');
       default: return t('app_name');
     }
   };
@@ -307,10 +330,11 @@ const App: React.FC = () => {
                     )}
 
                     {/* Sidebar Menu */}
-                    <Sidebar 
-                        isOpen={isSidebarOpen} 
+                    <Sidebar
+                        isOpen={isSidebarOpen}
                         onClose={() => setIsSidebarOpen(false)}
                         onOpenProfile={handleOpenProfile}
+                        onOpenResetPassword={handleOpenResetPassword}
                         settings={settings}
                         toggleTheme={toggleTheme}
                     />
@@ -320,10 +344,20 @@ const App: React.FC = () => {
                         <div className="flex flex-col h-full">
                             <TopBar title={t('settings_title')} onMenuClick={handleMenuClick} />
                             <div className="flex-1 overflow-hidden">
-                                <SettingsForm 
-                                    initialSettings={settings} 
+                                <SettingsForm
+                                    initialSettings={settings}
                                     onSave={handleSaveSettings}
                                     toggleTheme={toggleTheme}
+                                    onCancel={() => setViewState(previousView)}
+                                />
+                            </div>
+                        </div>
+                    ) : viewState === ViewState.RESET_PASSWORD ? (
+                        <div className="flex flex-col h-full">
+                            <TopBar title={t('reset_password_title')} onMenuClick={handleMenuClick} />
+                            <div className="flex-1 overflow-hidden">
+                                <ResetPassword
+                                    onSuccess={handleResetSuccess}
                                     onCancel={() => setViewState(previousView)}
                                 />
                             </div>
