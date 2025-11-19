@@ -13,7 +13,9 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
@@ -24,6 +26,11 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
     setMessage(null);
 
     try {
+      if (!isLogin && password !== confirmPassword) {
+        setError(t('auth_password_mismatch'));
+        return;
+      }
+
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({
           email,
@@ -47,6 +54,29 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
       setError(err.message || t('auth_error'));
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handlePasswordReset = async () => {
+    if (!email) {
+      setError(t('auth_reset_email_required'));
+      return;
+    }
+
+    setIsResetting(true);
+    setError(null);
+    setMessage(null);
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin,
+      });
+      if (error) throw error;
+      setMessage(t('auth_reset_email_sent'));
+    } catch (err: any) {
+      setError(err.message || t('auth_error'));
+    } finally {
+      setIsResetting(false);
     }
   };
 
@@ -91,6 +121,22 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                   minLength={6}
                 />
             </div>
+            {!isLogin && (
+              <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                    <Lock size={20} />
+                  </div>
+                  <input
+                    type="password"
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="block w-full pl-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-4 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm"
+                    placeholder={t('auth_confirm_password')}
+                    minLength={6}
+                  />
+              </div>
+            )}
           </div>
 
           {error && (
@@ -110,6 +156,19 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
           <Button type="submit" fullWidth isLoading={isLoading} variant="primary">
             {isLogin ? t('auth_login_btn') : t('auth_register_btn')}
           </Button>
+
+          {isLogin && (
+            <div className="flex justify-center">
+              <button
+                type="button"
+                onClick={handlePasswordReset}
+                className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 transition-colors disabled:opacity-60"
+                disabled={isResetting}
+              >
+                {t('auth_forgot_password')}
+              </button>
+            </div>
+          )}
         </form>
 
         <div className="text-center">
@@ -118,6 +177,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                 setIsLogin(!isLogin);
                 setError(null);
                 setMessage(null);
+                setConfirmPassword('');
             }}
             className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 transition-colors"
           >
