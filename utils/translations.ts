@@ -122,6 +122,8 @@ export const translations = {
     badge_streak_3_desc: '3 napos spórolási sorozat.',
     badge_hundred_hours_name: 'Időmilliomos',
     badge_hundred_hours_desc: '100+ óra megspórolva.',
+    badge_status_unlocked: 'Feloldva',
+    badge_status_locked: 'Még nincs meg',
 
     // Statistics
     stats_period: 'Időszak',
@@ -252,6 +254,8 @@ export const translations = {
     badge_streak_3_desc: '3-day saving streak.',
     badge_hundred_hours_name: 'Time Millionaire',
     badge_hundred_hours_desc: '100+ hours saved.',
+    badge_status_unlocked: 'Unlocked',
+    badge_status_locked: 'Locked',
 
     // Statistics
     stats_period: 'Period',

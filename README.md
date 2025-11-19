@@ -15,6 +15,8 @@ View your app in AI Studio: https://ai.studio/apps/drive/1maS1PYQB6-txyGLoQdLoLZ
 
 1. Install dependencies:
    `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
+2. Run the development server:
    `npm run dev`
+
+The deployed build on Vercel only needs the Supabase credentials that are already baked into `lib/supabaseClient.ts`, so there
+is no need to configure any Gemini/API keys for GitHub → Vercel deployments.
