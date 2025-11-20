@@ -1,9 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import { UserSettings, CalculationResult, HistoryItem } from '../types';
 import { Button } from './Button';
-import { ShoppingBag, Play, Check, X, Sparkles, Briefcase, MessageCircle } from 'lucide-react';
+import { ShoppingBag, Play, Check, X, Sparkles, Briefcase, Coins } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getAdviceMessage } from '../utils/adviceMessages';
+import { CoinFlip } from './CoinFlip';
 
 interface CalculatorProps {
   settings: UserSettings;
@@ -23,6 +24,7 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
   const [price, setPrice] = useState('');
   const [result, setResult] = useState<CalculationResult | null>(null);
   const [feedbackModal, setFeedbackModal] = useState<FeedbackModalState | null>(null);
+  const [showCoinFlip, setShowCoinFlip] = useState(false);
 
   // Hourly Rate Calculation
   const hourlyRate = useMemo(() => {
@@ -63,6 +65,11 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
     });
   };
 
+  const handleCoinFlipResult = (decision: 'bought' | 'saved') => {
+    setShowCoinFlip(false);
+    handleDecision(decision);
+  };
+
   const handleCloseFeedback = () => {
       setFeedbackModal(null);
       setResult(null);
@@ -81,6 +88,14 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
   return (
     <div className="h-full flex flex-col relative">
       
+      {/* Coin Flip Modal */}
+      {showCoinFlip && (
+        <CoinFlip 
+          onResult={handleCoinFlipResult}
+          onClose={() => setShowCoinFlip(false)}
+        />
+      )}
+
       {/* Feedback Modal */}
       {feedbackModal && (
           <div className="absolute inset-0 z-50 flex items-center justify-center p-6 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md animate-fade-in">
@@ -183,7 +198,7 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
             </div>
 
             {/* Action Buttons */}
-            <div className="grid grid-cols-2 gap-4 mb-auto">
+            <div className="grid grid-cols-2 gap-4 mb-4">
                 <button 
                     onClick={() => handleDecision('bought')}
                     className="flex flex-col items-center justify-center p-6 bg-rose-50 hover:bg-rose-100 dark:bg-rose-500/20 dark:hover:bg-rose-500/30 border-2 border-rose-200 dark:border-rose-500/50 rounded-2xl text-rose-700 dark:text-rose-300 transition-all active:scale-95"
@@ -202,6 +217,15 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
                     <span className="text-xs opacity-70 mt-1">(+{result.priceNum} {settings.currency})</span>
                 </button>
             </div>
+
+            {/* Coin Flip Button */}
+            <button
+              onClick={() => setShowCoinFlip(true)}
+              className="w-full flex items-center justify-center gap-2 p-4 bg-amber-50 hover:bg-amber-100 dark:bg-amber-600/20 dark:hover:bg-amber-600/30 border-2 border-amber-200 dark:border-amber-500/50 rounded-2xl text-amber-700 dark:text-amber-300 transition-all active:scale-95 font-semibold"
+            >
+              <Coins size={20} />
+              <span>{t('cant_decide')}</span>
+            </button>
 
             <div className="mt-8 text-center">
                 <button onClick={() => setResult(null)} className="text-slate-400 text-sm underline hover:text-slate-200 transition-colors">{t('new_calculation')}</button>
