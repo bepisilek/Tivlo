@@ -25,6 +25,7 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
   const [result, setResult] = useState<CalculationResult | null>(null);
   const [feedbackModal, setFeedbackModal] = useState<FeedbackModalState | null>(null);
   const [showCoinFlip, setShowCoinFlip] = useState(false);
+  const [coinSuggestion, setCoinSuggestion] = useState<'bought' | 'saved' | null>(null);
 
   // Hourly Rate Calculation
   const hourlyRate = useMemo(() => {
@@ -40,6 +41,7 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
     const minutes = Math.round((totalHoursDecimal - hours) * 60);
 
     setResult({ hours, minutes, totalHoursDecimal, priceNum });
+    setCoinSuggestion(null); // Reset suggestion
   };
 
   const handleDecision = (decision: 'bought' | 'saved') => {
@@ -63,11 +65,13 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
         data: result,
         message: advice
     });
+    
+    setCoinSuggestion(null); // Reset suggestion
   };
 
-  const handleCoinFlipResult = (decision: 'bought' | 'saved') => {
+  const handleCoinFlipSuggestion = (suggestion: 'bought' | 'saved') => {
     setShowCoinFlip(false);
-    handleDecision(decision);
+    setCoinSuggestion(suggestion);
   };
 
   const handleCloseFeedback = () => {
@@ -75,6 +79,7 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
       setResult(null);
       setProductName('');
       setPrice('');
+      setCoinSuggestion(null);
   };
 
   // Dynamic text color based on severity
@@ -85,13 +90,33 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
     return "text-rose-500 dark:text-rose-500";
   };
 
+  // Dynamic button style based on suggestion
+  const getButtonStyle = (type: 'bought' | 'saved') => {
+    if (!coinSuggestion) {
+      return type === 'bought' 
+        ? "bg-rose-50 hover:bg-rose-100 dark:bg-rose-500/20 dark:hover:bg-rose-500/30 border-2 border-rose-200 dark:border-rose-500/50 text-rose-700 dark:text-rose-300"
+        : "bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-600/20 dark:hover:bg-emerald-600/30 border-2 border-emerald-200 dark:border-emerald-500/50 text-emerald-700 dark:text-emerald-300";
+    }
+    
+    const isSuggested = coinSuggestion === type;
+    if (isSuggested) {
+      return type === 'bought'
+        ? "bg-rose-100 dark:bg-rose-500/40 border-4 border-rose-400 dark:border-rose-400 text-rose-800 dark:text-rose-200 shadow-lg shadow-rose-500/30 scale-105"
+        : "bg-emerald-100 dark:bg-emerald-600/40 border-4 border-emerald-400 dark:border-emerald-400 text-emerald-800 dark:text-emerald-200 shadow-lg shadow-emerald-500/30 scale-105";
+    } else {
+      return type === 'bought'
+        ? "bg-rose-50/50 hover:bg-rose-100 dark:bg-rose-500/10 dark:hover:bg-rose-500/20 border-2 border-rose-200/50 dark:border-rose-500/30 text-rose-700/70 dark:text-rose-300/70"
+        : "bg-emerald-50/50 hover:bg-emerald-100 dark:bg-emerald-600/10 dark:hover:bg-emerald-600/20 border-2 border-emerald-200/50 dark:border-emerald-500/30 text-emerald-700/70 dark:text-emerald-300/70";
+    }
+  };
+
   return (
     <div className="h-full flex flex-col relative">
       
       {/* Coin Flip Modal */}
       {showCoinFlip && (
         <CoinFlip 
-          onResult={handleCoinFlipResult}
+          onSuggestion={handleCoinFlipSuggestion}
           onClose={() => setShowCoinFlip(false)}
         />
       )}
@@ -147,7 +172,7 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
 
       <main className="flex-1 px-6 overflow-y-auto no-scrollbar pt-6 pb-24 max-w-md mx-auto w-full">
         
-        {/* Input Section - Hidden if Result is shown to focus on decision */}
+        {/* Input Section */}
         <div className={`space-y-4 transition-all duration-500 ${result ? 'hidden' : 'opacity-100'}`}>
             <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-600 dark:text-slate-400">{t('what_to_buy')}</label>
@@ -197,11 +222,21 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
               )}
             </div>
 
+            {/* Coin Suggestion Badge */}
+            {coinSuggestion && (
+              <div className="mb-4 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-xl animate-fade-in-up">
+                <div className="flex items-center justify-center gap-2 text-amber-700 dark:text-amber-300 text-sm font-semibold">
+                  <Coins size={16} />
+                  <span>{t('coinflip_suggestion_label')}</span>
+                </div>
+              </div>
+            )}
+
             {/* Action Buttons */}
             <div className="grid grid-cols-2 gap-4 mb-4">
                 <button 
                     onClick={() => handleDecision('bought')}
-                    className="flex flex-col items-center justify-center p-6 bg-rose-50 hover:bg-rose-100 dark:bg-rose-500/20 dark:hover:bg-rose-500/30 border-2 border-rose-200 dark:border-rose-500/50 rounded-2xl text-rose-700 dark:text-rose-300 transition-all active:scale-95"
+                    className={`flex flex-col items-center justify-center p-6 rounded-2xl transition-all active:scale-95 ${getButtonStyle('bought')}`}
                 >
                     <X size={36} className="mb-2" />
                     <span className="font-bold text-lg">{t('buy_btn')}</span>
@@ -210,7 +245,7 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
                 
                 <button 
                     onClick={() => handleDecision('saved')}
-                    className="flex flex-col items-center justify-center p-6 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-600/20 dark:hover:bg-emerald-600/30 border-2 border-emerald-200 dark:border-emerald-500/50 rounded-2xl text-emerald-700 dark:text-emerald-300 transition-all active:scale-95"
+                    className={`flex flex-col items-center justify-center p-6 rounded-2xl transition-all active:scale-95 ${getButtonStyle('saved')}`}
                 >
                     <Check size={36} className="mb-2" />
                     <span className="font-bold text-lg">{t('save_btn')}</span>
@@ -228,7 +263,7 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
             </button>
 
             <div className="mt-8 text-center">
-                <button onClick={() => setResult(null)} className="text-slate-400 text-sm underline hover:text-slate-200 transition-colors">{t('new_calculation')}</button>
+                <button onClick={() => { setResult(null); setCoinSuggestion(null); }} className="text-slate-400 text-sm underline hover:text-slate-200 transition-colors">{t('new_calculation')}</button>
             </div>
           </div>
         )}
