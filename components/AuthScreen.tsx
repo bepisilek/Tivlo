@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import { isSupabaseConfigured, supabase, SUPABASE_CONFIG_MESSAGE } from '../lib/supabaseClient';
 import { Button } from './Button';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Mail, Lock, AlertCircle, CheckCircle, Check } from 'lucide-react';
@@ -25,6 +25,12 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
     setIsLoading(true);
     setError(null);
     setMessage(null);
+
+    if (!supabase || !isSupabaseConfigured) {
+      setError(SUPABASE_CONFIG_MESSAGE);
+      setIsLoading(false);
+      return;
+    }
 
     try {
       if (!isLogin && password !== confirmPassword) {
@@ -95,6 +101,11 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
   const handlePasswordReset = async () => {
     if (!email) {
       setError(t('auth_reset_email_required'));
+      return;
+    }
+
+    if (!supabase || !isSupabaseConfigured) {
+      setError(SUPABASE_CONFIG_MESSAGE);
       return;
     }
 

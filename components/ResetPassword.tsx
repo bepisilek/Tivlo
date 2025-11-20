@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { AlertCircle, CheckCircle, Lock } from 'lucide-react';
-import { supabase } from '../lib/supabaseClient';
+import { isSupabaseConfigured, supabase, SUPABASE_CONFIG_MESSAGE } from '../lib/supabaseClient';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Button } from './Button';
 
@@ -24,6 +24,11 @@ export const ResetPassword: React.FC<ResetPasswordProps> = ({ onSuccess, onCance
 
     if (password !== confirmPassword) {
       setError(t('reset_password_mismatch'));
+      return;
+    }
+
+    if (!supabase || !isSupabaseConfigured) {
+      setError(SUPABASE_CONFIG_MESSAGE);
       return;
     }
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { X, User, Moon, Sun, LogOut, KeyRound } from 'lucide-react';
 import { UserSettings } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
-import { supabase } from '../lib/supabaseClient';
+import { isSupabaseConfigured, supabase, SUPABASE_CONFIG_MESSAGE } from '../lib/supabaseClient';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -17,6 +17,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenProfile
   const { t } = useLanguage();
 
   const handleLogout = async () => {
+    if (!supabase || !isSupabaseConfigured) {
+      alert(SUPABASE_CONFIG_MESSAGE);
+      return;
+    }
+
     await supabase.auth.signOut();
     onClose();
     // App.tsx will handle the state change via onAuthStateChange
