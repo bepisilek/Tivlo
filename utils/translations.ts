@@ -115,6 +115,21 @@ export const translations = {
     buy_sub: 'munka',
     save_btn: 'Megspórolom',
     new_calculation: 'Új számítás',
+    cant_decide: 'Nem tudok dönteni',
+    
+    // Coin Flip
+    coinflip_title: 'Fej vagy Írás?',
+    coinflip_subtitle: 'A sors döntsön helyetted!',
+    coinflip_heads: 'FEJ',
+    coinflip_tails: 'ÍRÁS',
+    coinflip_heads_means: 'Megveszem',
+    coinflip_tails_means: 'Megspórolom',
+    coinflip_choose_heads: 'Fej',
+    coinflip_choose_tails: 'Írás',
+    coinflip_flipping: 'Pörgetem...',
+    coinflip_result_buy: 'Megveszem!',
+    coinflip_result_save: 'Megspórolom!',
+    coinflip_deciding: 'A sors döntött...',
     
     // Feedback Modals
     feedback_saved_title: 'Ez az!',
@@ -282,6 +297,21 @@ export const translations = {
     buy_sub: 'work',
     save_btn: 'Save It',
     new_calculation: 'New Calculation',
+    cant_decide: 'Can\'t decide',
+    
+    // Coin Flip
+    coinflip_title: 'Heads or Tails?',
+    coinflip_subtitle: 'Let fate decide for you!',
+    coinflip_heads: 'HEADS',
+    coinflip_tails: 'TAILS',
+    coinflip_heads_means: 'Buy it',
+    coinflip_tails_means: 'Save it',
+    coinflip_choose_heads: 'Heads',
+    coinflip_choose_tails: 'Tails',
+    coinflip_flipping: 'Flipping...',
+    coinflip_result_buy: 'Buy it!',
+    coinflip_result_save: 'Save it!',
+    coinflip_deciding: 'Fate has decided...',
 
     // Feedback Modals
     feedback_saved_title: 'Awesome!',
