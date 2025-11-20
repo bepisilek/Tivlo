@@ -119,17 +119,19 @@ export const translations = {
     
     // Coin Flip
     coinflip_title: 'Fej vagy Írás?',
-    coinflip_subtitle: 'A sors döntsön helyetted!',
+    coinflip_subtitle: 'Dobd fel az érmét és nézd meg mire jut!',
     coinflip_heads: 'FEJ',
     coinflip_tails: 'ÍRÁS',
     coinflip_heads_means: 'Megveszem',
     coinflip_tails_means: 'Megspórolom',
-    coinflip_choose_heads: 'Fej',
-    coinflip_choose_tails: 'Írás',
+    coinflip_flip_it: '🪙 Dobás!',
     coinflip_flipping: 'Pörgetem...',
-    coinflip_result_buy: 'Megveszem!',
-    coinflip_result_save: 'Megspórolom!',
-    coinflip_deciding: 'A sors döntött...',
+    coinflip_suggests: 'Az érme azt javasolja:',
+    coinflip_result_buy: 'Megveszem',
+    coinflip_result_save: 'Megspórolom',
+    coinflip_follow_suggestion: 'Követem a javaslatot',
+    coinflip_ignore: 'Figyelmen kívül hagyom',
+    coinflip_suggestion_label: '💡 Az érme javasolta',
     
     // Feedback Modals
     feedback_saved_title: 'Ez az!',
@@ -301,17 +303,19 @@ export const translations = {
     
     // Coin Flip
     coinflip_title: 'Heads or Tails?',
-    coinflip_subtitle: 'Let fate decide for you!',
+    coinflip_subtitle: 'Flip the coin and see what it suggests!',
     coinflip_heads: 'HEADS',
     coinflip_tails: 'TAILS',
     coinflip_heads_means: 'Buy it',
     coinflip_tails_means: 'Save it',
-    coinflip_choose_heads: 'Heads',
-    coinflip_choose_tails: 'Tails',
+    coinflip_flip_it: '🪙 Flip it!',
     coinflip_flipping: 'Flipping...',
-    coinflip_result_buy: 'Buy it!',
-    coinflip_result_save: 'Save it!',
-    coinflip_deciding: 'Fate has decided...',
+    coinflip_suggests: 'The coin suggests:',
+    coinflip_result_buy: 'Buy it',
+    coinflip_result_save: 'Save it',
+    coinflip_follow_suggestion: 'Follow suggestion',
+    coinflip_ignore: 'Ignore it',
+    coinflip_suggestion_label: '💡 Coin suggested',
 
     // Feedback Modals
     feedback_saved_title: 'Awesome!',
