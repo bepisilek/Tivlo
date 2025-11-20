@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from './lib/supabaseClient';
+import { isSupabaseConfigured, supabase, SUPABASE_CONFIG_MESSAGE } from './lib/supabaseClient';
 import { SettingsForm } from './components/SettingsForm';
 import { Calculator } from './components/Calculator';
 import { History } from './components/History';
@@ -40,6 +40,13 @@ const App: React.FC = () => {
 
   // Initial Auth Check & Subscription
   useEffect(() => {
+    if (!supabase) {
+      console.warn(SUPABASE_CONFIG_MESSAGE);
+      setIsLoading(false);
+      setViewState(ViewState.WELCOME);
+      return;
+    }
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       if (session) {
@@ -104,6 +111,8 @@ const App: React.FC = () => {
 
   // Fetch Profile and History from Supabase
   const fetchUserData = async (userId: string) => {
+    if (!supabase) return;
+
     try {
         setIsLoading(true);
 
@@ -185,7 +194,7 @@ const App: React.FC = () => {
   };
 
   const handleSaveSettings = async (newSettings: UserSettings) => {
-    if (!session) return;
+    if (!session || !supabase) return;
 
     try {
         const updates = {
@@ -226,14 +235,14 @@ const App: React.FC = () => {
       const newTheme = settings.theme === 'dark' ? 'light' : 'dark';
       // Optimistic update
       setSettings(prev => ({ ...prev, theme: newTheme }));
-      
-      if (session) {
+
+      if (session && supabase) {
           await supabase.from('profiles').update({ theme: newTheme }).eq('id', session.user.id);
       }
   };
 
   const handleSaveHistory = async (itemData: Omit<HistoryItem, 'id' | 'date'>) => {
-      if (!session) return;
+      if (!session || !supabase) return;
 
       try {
           const dbItem = {
@@ -271,7 +280,7 @@ const App: React.FC = () => {
   };
 
   const handleClearHistory = async () => {
-      if (!session) return;
+      if (!session || !supabase) return;
       if(confirm(t('clear_confirm'))) {
           const { error } = await supabase.from('history').delete().eq('user_id', session.user.id);
           if (!error) {
@@ -310,6 +319,18 @@ const App: React.FC = () => {
       default: return t('app_name');
     }
   };
+
+  if (!isSupabaseConfigured) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-slate-50 flex items-center justify-center p-6">
+        <div className="max-w-xl w-full bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+          <h1 className="text-2xl font-semibold">Configuration required</h1>
+          <p className="text-slate-200 leading-relaxed">{SUPABASE_CONFIG_MESSAGE}</p>
+          <p className="text-slate-400 text-sm">Update your <code>.env</code> file with <strong>VITE_SUPABASE_URL</strong> and <strong>VITE_SUPABASE_ANON_KEY</strong> to enable authentication and data syncing.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return <div className="min-h-screen bg-slate-900 flex items-center justify-center text-blue-500 animate-pulse">{t('loading')}</div>;
