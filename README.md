@@ -13,13 +13,12 @@ View your app in AI Studio: https://ai.studio/apps/drive/1maS1PYQB6-txyGLoQdLoLZ
 **Prerequisites:**  Node.js
 
 
-1. Install dependencies:
+1. Create a `.env` file based on `.env.example` with your Supabase **anon** key (never the service role key) and project URL. 
+   Make sure Row Level Security is enabled on your tables so the anon key cannot read or write outside the signed-in user scope.
+2. Install dependencies:
    `npm install`
-2. Run the development server:
+3. Run the development server:
    `npm run dev`
-
-The deployed build on Vercel only needs the Supabase credentials that are already baked into `lib/supabaseClient.ts`, so there
-is no need to configure any Gemini/API keys for GitHub → Vercel deployments.
 
 ## Remove a Supabase user by email
 
