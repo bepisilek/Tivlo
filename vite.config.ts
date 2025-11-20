@@ -9,6 +9,19 @@ export default defineConfig(() => {
         host: '0.0.0.0',
       },
       plugins: [react()],
+      publicDir: 'public',
+      build: {
+        outDir: 'dist',
+        assetsDir: 'assets',
+        rollupOptions: {
+          output: {
+            manualChunks: {
+              'react-vendor': ['react', 'react-dom'],
+              supabase: ['@supabase/supabase-js']
+            }
+          }
+        }
+      },
       resolve: {
         alias: {
           '@': path.resolve(__dirname, '.'),
