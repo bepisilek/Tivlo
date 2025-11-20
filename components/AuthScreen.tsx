@@ -102,7 +102,6 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
         
         setMessage(t('auth_reset_email_sent'));
         setEmail('');
-        // Automatically switch back to login after 3 seconds
         setTimeout(() => {
           setMode('login');
           setMessage(null);
@@ -173,7 +172,11 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
           </p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleAuth}>
+        <form 
+          className="mt-8 space-y-6" 
+          onSubmit={handleAuth}
+          autoComplete="on"
+        >
           <div className="space-y-4 rounded-md shadow-sm">
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
@@ -184,6 +187,9 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                autoComplete={mode === 'register' ? 'email' : 'username'}
+                name={mode === 'register' ? 'email' : 'username'}
+                id={`${mode}-email`}
                 className="block w-full pl-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-4 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm"
                 placeholder={t('auth_email')}
               />
@@ -200,6 +206,9 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+                    name="password"
+                    id={`${mode}-password`}
                     className="block w-full pl-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-4 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm"
                     placeholder={t('auth_password')}
                     minLength={6}
@@ -217,6 +226,9 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                         required
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
+                        autoComplete="new-password"
+                        name="confirm-password"
+                        id="register-confirm-password"
                         className="block w-full pl-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-4 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm"
                         placeholder={t('auth_confirm_password')}
                         minLength={6}
