@@ -41,7 +41,7 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
     const minutes = Math.round((totalHoursDecimal - hours) * 60);
 
     setResult({ hours, minutes, totalHoursDecimal, priceNum });
-    setCoinSuggestion(null); // Reset suggestion
+    setCoinSuggestion(null);
   };
 
   const handleDecision = (decision: 'bought' | 'saved') => {
@@ -58,7 +58,6 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
         adviceUsed: advice
     });
 
-    // Show Feedback Modal
     setFeedbackModal({
         isOpen: true,
         type: decision,
@@ -66,7 +65,7 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
         message: advice
     });
     
-    setCoinSuggestion(null); // Reset suggestion
+    setCoinSuggestion(null);
   };
 
   const handleCoinFlipSuggestion = (suggestion: 'bought' | 'saved') => {
@@ -82,7 +81,6 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
       setCoinSuggestion(null);
   };
 
-  // Dynamic text color based on severity
   const getSeverityColor = (totalHours: number) => {
     if (totalHours < 1) return "text-emerald-600 dark:text-emerald-400";
     if (totalHours < 8) return "text-yellow-500 dark:text-yellow-400";
@@ -90,7 +88,6 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
     return "text-rose-500 dark:text-rose-500";
   };
 
-  // Dynamic button style based on suggestion
   const getButtonStyle = (type: 'bought' | 'saved') => {
     if (!coinSuggestion) {
       return type === 'bought' 
@@ -113,7 +110,6 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
   return (
     <div className="h-full flex flex-col relative">
       
-      {/* Coin Flip Modal */}
       {showCoinFlip && (
         <CoinFlip 
           onSuggestion={handleCoinFlipSuggestion}
@@ -121,39 +117,38 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
         />
       )}
 
-      {/* Feedback Modal */}
       {feedbackModal && (
-          <div className="absolute inset-0 z-50 flex items-center justify-center p-6 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md animate-fade-in">
-              <div className="w-full max-w-sm text-center space-y-6">
+          <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md animate-fade-in">
+              <div className="w-full max-w-sm text-center space-y-4 px-2">
                   {feedbackModal.type === 'saved' ? (
                       <>
-                        <div className="w-24 h-24 bg-emerald-100 dark:bg-emerald-600/20 rounded-full flex items-center justify-center mx-auto animate-bounce-small">
-                            <Sparkles size={48} className="text-emerald-600 dark:text-emerald-400" />
+                        <div className="w-20 h-20 bg-emerald-100 dark:bg-emerald-600/20 rounded-full flex items-center justify-center mx-auto animate-bounce-small">
+                            <Sparkles size={40} className="text-emerald-600 dark:text-emerald-400" />
                         </div>
                         <div>
-                            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">{t('feedback_saved_title')}</h2>
-                            <p className="text-slate-600 dark:text-slate-300 text-lg">
+                            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-2">{t('feedback_saved_title')}</h2>
+                            <p className="text-slate-600 dark:text-slate-300 text-base md:text-lg">
                                 {t('feedback_saved_desc')} <span className="font-bold text-emerald-600 dark:text-emerald-400">{feedbackModal.data.priceNum.toLocaleString()} {settings.currency}</span>!
                             </p>
                         </div>
-                        <div className="p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl border border-emerald-100 dark:border-emerald-800">
-                            <p className="text-emerald-800 dark:text-emerald-200 font-medium italic">"{feedbackModal.message}"</p>
+                        <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl border border-emerald-100 dark:border-emerald-800">
+                            <p className="text-emerald-800 dark:text-emerald-200 font-medium italic text-sm">"{feedbackModal.message}"</p>
                         </div>
                       </>
                   ) : (
                       <>
-                         <div className="w-24 h-24 bg-rose-100 dark:bg-rose-600/20 rounded-full flex items-center justify-center mx-auto">
-                            <Briefcase size={48} className="text-rose-600 dark:text-rose-400" />
+                         <div className="w-20 h-20 bg-rose-100 dark:bg-rose-600/20 rounded-full flex items-center justify-center mx-auto">
+                            <Briefcase size={40} className="text-rose-600 dark:text-rose-400" />
                         </div>
                         <div>
-                            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">{t('feedback_bought_title')}</h2>
-                            <div className="text-4xl font-black text-rose-600 dark:text-rose-400 my-4">
+                            <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white mb-2">{t('feedback_bought_title')}</h2>
+                            <div className="text-3xl md:text-4xl font-black text-rose-600 dark:text-rose-400 my-3">
                                 {feedbackModal.data.hours} {t('hour_short')}
-                                {feedbackModal.data.minutes > 0 && <span className="text-2xl ml-2">{feedbackModal.data.minutes} {t('min_short')}</span>}
+                                {feedbackModal.data.minutes > 0 && <span className="text-xl md:text-2xl ml-2">{feedbackModal.data.minutes} {t('min_short')}</span>}
                             </div>
                         </div>
-                        <div className="p-4 bg-rose-50 dark:bg-rose-900/20 rounded-xl border border-rose-100 dark:border-rose-800">
-                             <p className="text-rose-800 dark:text-rose-200 font-medium italic">"{feedbackModal.message}"</p>
+                        <div className="p-3 bg-rose-50 dark:bg-rose-900/20 rounded-xl border border-rose-100 dark:border-rose-800">
+                             <p className="text-rose-800 dark:text-rose-200 font-medium italic text-sm">"{feedbackModal.message}"</p>
                         </div>
                       </>
                   )}
@@ -166,27 +161,27 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
       )}
 
       {/* Sub-header info */}
-      <div className="px-6 py-2 text-center border-b border-slate-100 dark:border-slate-800/50 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm shrink-0">
-         <p className="text-sm text-slate-500">{t('hourly_rate')}: <span className="font-mono font-bold text-slate-700 dark:text-slate-300">{hourlyRate.toFixed(0)} {settings.currency}</span></p>
+      <div className="px-4 py-2 text-center border-b border-slate-100 dark:border-slate-800/50 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm shrink-0">
+         <p className="text-xs md:text-sm text-slate-500">{t('hourly_rate')}: <span className="font-mono font-bold text-slate-700 dark:text-slate-300">{hourlyRate.toFixed(0)} {settings.currency}</span></p>
       </div>
 
-      <main className="flex-1 px-6 overflow-y-auto no-scrollbar pt-6 pb-24 max-w-md mx-auto w-full">
+      <main className="flex-1 px-4 md:px-6 overflow-y-auto no-scrollbar py-4 pb-20 max-w-md mx-auto w-full">
         
         {/* Input Section */}
         <div className={`space-y-4 transition-all duration-500 ${result ? 'hidden' : 'opacity-100'}`}>
             <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-400">{t('what_to_buy')}</label>
+                <label className="text-xs md:text-sm font-medium text-slate-600 dark:text-slate-400">{t('what_to_buy')}</label>
                 <input
                     type="text"
                     value={productName}
                     onChange={(e) => setProductName(e.target.value)}
                     placeholder={t('placeholder_item')}
-                    className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500 outline-none shadow-sm"
+                    className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 md:p-4 text-sm md:text-base text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500 outline-none shadow-sm"
                 />
             </div>
 
             <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-400">{t('price_label')} ({settings.currency})</label>
+                <label className="text-xs md:text-sm font-medium text-slate-600 dark:text-slate-400">{t('price_label')} ({settings.currency})</label>
                 <div className="relative">
                     <input
                         type="number"
@@ -194,10 +189,11 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
                         value={price}
                         onChange={(e) => setPrice(e.target.value)}
                         placeholder="0"
-                        className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 text-3xl font-bold text-slate-900 dark:text-white placeholder-slate-300 focus:ring-2 focus:ring-blue-500 outline-none shadow-sm"
+                        className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 md:p-4 text-2xl md:text-3xl font-bold text-slate-900 dark:text-white placeholder-slate-300 focus:ring-2 focus:ring-blue-500 outline-none shadow-sm"
                     />
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-                        <ShoppingBag size={24} />
+                    <div className="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                        <ShoppingBag size={20} className="md:hidden" />
+                        <ShoppingBag size={24} className="hidden md:block" />
                     </div>
                 </div>
             </div>
@@ -210,60 +206,61 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
         {/* Result Display */}
         {result && !feedbackModal && (
           <div className="flex flex-col h-full animate-fade-in-up">
-            <div className="text-center mb-6 pt-4">
-              <p className="text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider text-xs font-bold">{t('cost_in_life')}</p>
-              <div className={`text-7xl font-black leading-none tracking-tighter ${getSeverityColor(result.totalHoursDecimal)}`}>
-                {result.hours}<span className="text-2xl font-medium text-slate-400 ml-1">{t('hour_short')}</span>
+            <div className="text-center mb-4 md:mb-6 pt-2 md:pt-4">
+              <p className="text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider text-[10px] md:text-xs font-bold">{t('cost_in_life')}</p>
+              <div className={`text-5xl md:text-7xl font-black leading-none tracking-tighter ${getSeverityColor(result.totalHoursDecimal)}`}>
+                {result.hours}<span className="text-xl md:text-2xl font-medium text-slate-400 ml-1">{t('hour_short')}</span>
               </div>
               {result.minutes > 0 && (
-                <div className={`text-4xl font-bold mt-2 ${getSeverityColor(result.totalHoursDecimal)} opacity-80`}>
-                  {result.minutes}<span className="text-lg font-medium text-slate-400 ml-1">{t('min_short')}</span>
+                <div className={`text-3xl md:text-4xl font-bold mt-2 ${getSeverityColor(result.totalHoursDecimal)} opacity-80`}>
+                  {result.minutes}<span className="text-base md:text-lg font-medium text-slate-400 ml-1">{t('min_short')}</span>
                 </div>
               )}
             </div>
 
-            {/* Coin Suggestion Badge */}
             {coinSuggestion && (
-              <div className="mb-4 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-xl animate-fade-in-up">
-                <div className="flex items-center justify-center gap-2 text-amber-700 dark:text-amber-300 text-sm font-semibold">
-                  <Coins size={16} />
+              <div className="mb-3 md:mb-4 p-2.5 md:p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-xl animate-fade-in-up">
+                <div className="flex items-center justify-center gap-2 text-amber-700 dark:text-amber-300 text-xs md:text-sm font-semibold">
+                  <Coins size={14} className="md:hidden" />
+                  <Coins size={16} className="hidden md:block" />
                   <span>{t('coinflip_suggestion_label')}</span>
                 </div>
               </div>
             )}
 
             {/* Action Buttons */}
-            <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-2 gap-3 md:gap-4 mb-3 md:mb-4">
                 <button 
                     onClick={() => handleDecision('bought')}
-                    className={`flex flex-col items-center justify-center p-6 rounded-2xl transition-all active:scale-95 ${getButtonStyle('bought')}`}
+                    className={`flex flex-col items-center justify-center p-4 md:p-6 rounded-2xl transition-all active:scale-95 ${getButtonStyle('bought')}`}
                 >
-                    <X size={36} className="mb-2" />
-                    <span className="font-bold text-lg">{t('buy_btn')}</span>
-                    <span className="text-xs opacity-70 mt-1">(-{result.hours}h {t('buy_sub')})</span>
+                    <X size={28} className="mb-1 md:mb-2 md:w-9 md:h-9" />
+                    <span className="font-bold text-base md:text-lg">{t('buy_btn')}</span>
+                    <span className="text-[10px] md:text-xs opacity-70 mt-0.5 md:mt-1">(-{result.hours}h {t('buy_sub')})</span>
                 </button>
                 
                 <button 
                     onClick={() => handleDecision('saved')}
-                    className={`flex flex-col items-center justify-center p-6 rounded-2xl transition-all active:scale-95 ${getButtonStyle('saved')}`}
+                    className={`flex flex-col items-center justify-center p-4 md:p-6 rounded-2xl transition-all active:scale-95 ${getButtonStyle('saved')}`}
                 >
-                    <Check size={36} className="mb-2" />
-                    <span className="font-bold text-lg">{t('save_btn')}</span>
-                    <span className="text-xs opacity-70 mt-1">(+{result.priceNum} {settings.currency})</span>
+                    <Check size={28} className="mb-1 md:mb-2 md:w-9 md:h-9" />
+                    <span className="font-bold text-base md:text-lg">{t('save_btn')}</span>
+                    <span className="text-[10px] md:text-xs opacity-70 mt-0.5 md:mt-1">(+{result.priceNum} {settings.currency})</span>
                 </button>
             </div>
 
             {/* Coin Flip Button */}
             <button
               onClick={() => setShowCoinFlip(true)}
-              className="w-full flex items-center justify-center gap-2 p-4 bg-amber-50 hover:bg-amber-100 dark:bg-amber-600/20 dark:hover:bg-amber-600/30 border-2 border-amber-200 dark:border-amber-500/50 rounded-2xl text-amber-700 dark:text-amber-300 transition-all active:scale-95 font-semibold"
+              className="w-full flex items-center justify-center gap-2 p-3 md:p-4 bg-amber-50 hover:bg-amber-100 dark:bg-amber-600/20 dark:hover:bg-amber-600/30 border-2 border-amber-200 dark:border-amber-500/50 rounded-2xl text-amber-700 dark:text-amber-300 transition-all active:scale-95 font-semibold text-sm md:text-base"
             >
-              <Coins size={20} />
+              <Coins size={18} className="md:hidden" />
+              <Coins size={20} className="hidden md:block" />
               <span>{t('cant_decide')}</span>
             </button>
 
-            <div className="mt-8 text-center">
-                <button onClick={() => { setResult(null); setCoinSuggestion(null); }} className="text-slate-400 text-sm underline hover:text-slate-200 transition-colors">{t('new_calculation')}</button>
+            <div className="mt-6 md:mt-8 text-center">
+                <button onClick={() => { setResult(null); setCoinSuggestion(null); }} className="text-slate-400 text-xs md:text-sm underline hover:text-slate-200 transition-colors">{t('new_calculation')}</button>
             </div>
           </div>
         )}
