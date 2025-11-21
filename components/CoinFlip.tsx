@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { X } from 'lucide-react';
 
@@ -14,25 +14,48 @@ export const CoinFlip: React.FC<CoinFlipProps> = ({ onSuggestion, onClose }) => 
   const [flipState, setFlipState] = useState<FlipState>('idle');
   const [result, setResult] = useState<'heads' | 'tails' | null>(null);
   const [winking, setWinking] = useState(false);
+  const [rotation, setRotation] = useState(0);
+
+  // Reset state when opened
+  useEffect(() => {
+    if (flipState === 'idle') {
+      setRotation(0);
+    }
+  }, [flipState]);
 
   const handleFlip = () => {
     setFlipState('flipping');
     
-    // Tényleg random eredmény - crypto.getRandomValues használata a biztonságos véletlenhez
+    // Biztonságos véletlen generálás
     const randomValue = crypto.getRandomValues(new Uint32Array(1))[0];
-    const random = randomValue % 2 === 0 ? 'heads' : 'tails';
+    const isHeads = randomValue % 2 === 0;
+    const newResult = isHeads ? 'heads' : 'tails';
     
-    // 1.2 másodperc múlva eredmény (gyorsabb, dinamikusabb animáció)
+    // Kiszámoljuk a végső forgási szöget
+    // Alapvetően sokat pörögjön (min 5 teljes kör = 1800 fok) + a végeredményhez szükséges korrekció
+    // Ha heads (fej), akkor 0, 360, 720... (páros * 180)
+    // Ha tails (írás), akkor 180, 540... (páratlan * 180)
+    
+    const baseRotation = 1800 + (Math.floor(Math.random() * 3) * 360); // Véletlenszerű extra pörgés
+    const targetRotation = isHeads 
+      ? baseRotation // Fej = teljes körre végződik
+      : baseRotation + 180; // Írás = félkörre végződik
+
+    // CSS változó beállítása a dinamikus forgáshoz
+    document.documentElement.style.setProperty('--target-rotation', `${targetRotation}deg`);
+
+    // Animáció időzítése (összhangban a CSS-sel)
     setTimeout(() => {
-      setResult(random);
+      setResult(newResult);
       setFlipState('result');
+      setRotation(targetRotation); // Megtartjuk a pozíciót
       
-      // Kacsintás animáció
+      // Kacsintás animáció a landolás után
       setTimeout(() => {
         setWinking(true);
         setTimeout(() => setWinking(false), 400);
-      }, 200);
-    }, 1200);
+      }, 300);
+    }, 2000); // 2 másodperces animáció a drámai hatáshoz
   };
 
   const handleAcceptSuggestion = () => {
@@ -42,301 +65,252 @@ export const CoinFlip: React.FC<CoinFlipProps> = ({ onSuggestion, onClose }) => 
   };
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md animate-fade-in">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-black/85 backdrop-blur-md animate-fade-in perspective-container">
       
       {/* Close button */}
       <button 
         onClick={onClose}
-        className="absolute top-4 right-4 p-2 text-white/70 hover:text-white z-20 transition-colors"
+        className="absolute top-4 right-4 p-2 text-white/70 hover:text-white z-20 transition-colors hover:rotate-90 duration-300"
       >
         <X size={24} />
       </button>
 
-      <div className="w-full max-w-sm text-center space-y-8">
+      <div className="w-full max-w-md text-center space-y-6 relative z-10">
         
-        {/* Title */}
-        {flipState === 'idle' && (
-          <div className="animate-fade-in-up">
-            <h2 className="text-4xl font-black text-white mb-3">{t('coinflip_title')}</h2>
-            <p className="text-white/70 text-base">{t('coinflip_subtitle')}</p>
-          </div>
-        )}
+        {/* Title Area */}
+        <div className={`transition-all duration-500 ${flipState !== 'idle' ? 'opacity-50 scale-90 blur-[2px]' : 'opacity-100'}`}>
+            <h2 className="text-4xl font-black text-white mb-2 tracking-tight drop-shadow-lg">{t('coinflip_title')}</h2>
+            <p className="text-white/60 text-sm font-medium uppercase tracking-widest">{t('coinflip_subtitle')}</p>
+        </div>
 
-        {/* Coin Container */}
-        <div className="relative flex items-center justify-center" style={{ height: '350px' }}>
-          <div 
-            className={`coin-wrapper ${flipState === 'flipping' ? 'flipping' : ''} ${flipState === 'result' ? 'landed' : ''}`}
-          >
-            <div
-              className="coin"
-              style={{
-                transform: flipState === 'result' && result === 'tails' ? 'rotateY(180deg)' : 'rotateY(0deg)'
+        {/* 3D Scene Container */}
+        <div className="scene h-[320px] w-full flex items-center justify-center perspective-1000">
+          <div className={`coin-container ${flipState === 'flipping' ? 'animate-toss' : ''} ${flipState === 'result' ? 'animate-land' : ''}`}>
+            
+            {/* The 3D Coin */}
+            <div 
+              className="coin preserve-3d"
+              style={{ 
+                transform: flipState === 'result' 
+                  ? `rotateX(${rotation}deg)` 
+                  : undefined 
               }}
             >
-              <div className="coin-edge" aria-hidden />
-              {/* Heads (Fej - Megveszem) */}
-              <div className="coin-face coin-heads">
-                <div className="w-52 h-52 bg-gradient-to-br from-amber-300 via-yellow-400 to-amber-500 rounded-full shadow-2xl flex items-center justify-center border-8 border-amber-600 relative overflow-hidden">
-                  {/* Shine effect */}
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/40 via-transparent to-black/20"></div>
-                  <div className="absolute top-0 left-0 w-20 h-20 bg-white/30 rounded-full blur-xl"></div>
+              {/* 3D LAYER TRICK:
+                 Helyett, hogy egyetlen "edge" div-et próbálnánk hajlítani,
+                 létrehozunk több réteget (layers), ami tömörséget ad az érmének.
+              */}
+              
+              {/* Side Layers (The Thickness) - Darker Gold */}
+              {[...Array(16)].map((_, i) => (
+                <div 
+                  key={i}
+                  className="coin-layer"
+                  style={{ transform: `translateZ(${i - 8}px)` }}
+                />
+              ))}
+
+              {/* FRONT FACE (HEADS) */}
+              <div className="coin-face front" style={{ transform: 'translateZ(9px)' }}>
+                <div className="w-full h-full rounded-full bg-gradient-to-br from-amber-300 via-yellow-500 to-amber-700 border-[6px] border-yellow-600 flex items-center justify-center shadow-inner relative overflow-hidden">
+                  {/* Shine */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-white/40 to-transparent opacity-70 pointer-events-none"></div>
                   
-                  {/* Face */}
-                  <div className="relative z-10 flex flex-col items-center">
-                    {/* Eyes */}
-                    <div className="flex gap-8 mb-4">
-                      <div className={`w-5 h-5 bg-amber-900 rounded-full transition-all duration-300 ${winking && result === 'heads' ? 'scale-y-[0.15] -translate-y-1' : ''}`}></div>
-                      <div className={`w-5 h-5 bg-amber-900 rounded-full transition-all duration-300 ${winking && result === 'heads' ? 'scale-y-[0.15] -translate-y-1' : ''}`}></div>
+                  <div className="flex flex-col items-center transform scale-90">
+                    {/* Simple Face Icon */}
+                    <div className="flex gap-6 mb-3">
+                        <div className={`w-4 h-4 bg-yellow-900 rounded-full transition-all ${winking && result === 'heads' ? 'scale-y-10' : ''}`}></div>
+                        <div className={`w-4 h-4 bg-yellow-900 rounded-full transition-all ${winking && result === 'heads' ? 'scale-y-10' : ''}`}></div>
                     </div>
-                    
-                    {/* Smile */}
-                    <div className="w-16 h-8 border-b-[5px] border-amber-900 rounded-b-full"></div>
-                  </div>
-                  
-                  {/* Text */}
-                  <div className="absolute bottom-6 text-amber-900 font-black text-sm uppercase tracking-[0.3em]">
-                    {t('coinflip_heads')}
+                    <div className="w-12 h-6 border-b-4 border-yellow-900 rounded-full"></div>
+                    <span className="mt-4 text-yellow-900 font-black text-xs tracking-[0.3em] uppercase">{t('coinflip_heads')}</span>
                   </div>
                 </div>
               </div>
 
-              {/* Tails (Írás - Megspórolom) */}
-              <div className="coin-face coin-tails">
-                <div className="w-52 h-52 bg-gradient-to-br from-emerald-300 via-green-400 to-emerald-500 rounded-full shadow-2xl flex items-center justify-center border-8 border-emerald-600 relative overflow-hidden">
-                  {/* Shine effect */}
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/40 via-transparent to-black/20"></div>
-                  <div className="absolute top-0 left-0 w-20 h-20 bg-white/30 rounded-full blur-xl"></div>
+              {/* BACK FACE (TAILS) */}
+              <div className="coin-face back" style={{ transform: 'translateZ(-9px) rotateY(180deg)' }}>
+                <div className="w-full h-full rounded-full bg-gradient-to-br from-emerald-300 via-green-500 to-emerald-700 border-[6px] border-emerald-600 flex items-center justify-center shadow-inner relative overflow-hidden">
+                  {/* Shine */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-white/40 to-transparent opacity-70 pointer-events-none"></div>
                   
-                  {/* Face */}
-                  <div className="relative z-10 flex flex-col items-center">
-                    {/* Eyes */}
-                    <div className="flex gap-8 mb-4">
-                      <div className={`w-5 h-5 bg-emerald-900 rounded-full transition-all duration-300 ${winking && result === 'tails' ? 'scale-y-[0.15] -translate-y-1' : ''}`}></div>
-                      <div className={`w-5 h-5 bg-emerald-900 rounded-full transition-all duration-300 ${winking && result === 'tails' ? 'scale-y-[0.15] -translate-y-1' : ''}`}></div>
+                  <div className="flex flex-col items-center transform scale-90">
+                     {/* Simple Face Icon */}
+                     <div className="flex gap-6 mb-3">
+                        <div className={`w-4 h-4 bg-emerald-900 rounded-full transition-all ${winking && result === 'tails' ? 'scale-y-10' : ''}`}></div>
+                        <div className={`w-4 h-4 bg-emerald-900 rounded-full transition-all ${winking && result === 'tails' ? 'scale-y-10' : ''}`}></div>
                     </div>
-                    
-                    {/* Smile */}
-                    <div className="w-16 h-8 border-b-[5px] border-emerald-900 rounded-b-full"></div>
-                  </div>
-                  
-                  {/* Text */}
-                  <div className="absolute bottom-6 text-emerald-900 font-black text-sm uppercase tracking-[0.3em]">
-                    {t('coinflip_tails')}
+                    <div className="w-12 h-6 border-b-4 border-emerald-900 rounded-full"></div>
+                    <span className="mt-4 text-emerald-900 font-black text-xs tracking-[0.3em] uppercase">{t('coinflip_tails')}</span>
                   </div>
                 </div>
               </div>
+
             </div>
+            
+            {/* Shadow on the "ground" */}
+            <div className={`shadow-element ${flipState === 'flipping' ? 'animate-shadow-scale' : ''}`}></div>
           </div>
         </div>
 
-        {/* Info Text */}
-        {flipState === 'idle' && (
-          <div className="text-sm text-white/60 space-y-2 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
-            <div className="flex items-center justify-center gap-3">
-              <span className="text-amber-400 font-bold text-base">{t('coinflip_heads')}</span>
-              <span className="text-white/40">→</span>
-              <span className="text-white/80">{t('coinflip_heads_means')}</span>
-            </div>
-            <div className="flex items-center justify-center gap-3">
-              <span className="text-emerald-400 font-bold text-base">{t('coinflip_tails')}</span>
-              <span className="text-white/40">→</span>
-              <span className="text-white/80">{t('coinflip_tails_means')}</span>
-            </div>
-          </div>
-        )}
+        {/* Controls & Result */}
+        <div className="min-h-[140px] flex flex-col items-center justify-end pb-4">
+            {flipState === 'idle' && (
+            <button
+                onClick={handleFlip}
+                className="group relative px-8 py-4 bg-gradient-to-r from-amber-500 to-yellow-400 text-amber-950 font-black text-xl rounded-full shadow-[0_0_40px_-10px_rgba(251,191,36,0.6)] transition-all hover:scale-105 active:scale-95 overflow-hidden"
+            >
+                <span className="relative z-10 flex items-center gap-2">
+                 {t('coinflip_flip_it')} 
+                </span>
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+            </button>
+            )}
 
-        {/* Action Button */}
-        {flipState === 'idle' && (
-          <button
-            onClick={handleFlip}
-            className="w-full py-5 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white font-black text-xl rounded-2xl shadow-2xl transition-all active:scale-95 animate-fade-in-up"
-            style={{ animationDelay: '0.2s' }}
-          >
-            {t('coinflip_flip_it')}
-          </button>
-        )}
+            {flipState === 'flipping' && (
+                <div className="text-white/50 text-sm font-mono animate-pulse">
+                    {t('coinflip_flipping')}...
+                </div>
+            )}
 
-        {flipState === 'flipping' && (
-          <div className="text-white/80 text-lg font-medium animate-pulse">
-            {t('coinflip_flipping')}
-          </div>
-        )}
-
-        {flipState === 'result' && result && (
-          <div className="animate-fade-in-up space-y-4">
-            <div className="space-y-2">
-              <div className="text-white/60 text-sm uppercase tracking-wider">
-                {t('coinflip_suggests')}
-              </div>
-              <div className={`text-5xl font-black ${result === 'heads' ? 'text-amber-400' : 'text-emerald-400'}`}>
+            {flipState === 'result' && result && (
+            <div className="w-full space-y-4 animate-fade-in-up">
+                <div className={`text-4xl font-black uppercase tracking-tight ${result === 'heads' ? 'text-amber-400' : 'text-emerald-400'}`}>
                 {result === 'heads' ? t('coinflip_result_buy') : t('coinflip_result_save')}
-              </div>
+                </div>
+                
+                <div className="flex gap-3 pt-2">
+                <button
+                    onClick={handleAcceptSuggestion}
+                    className={`flex-1 py-3.5 font-bold text-white rounded-xl shadow-lg transition-transform active:scale-95 ${
+                        result === 'heads' 
+                        ? 'bg-gradient-to-r from-amber-600 to-orange-600 hover:brightness-110' 
+                        : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:brightness-110'
+                    }`}
+                >
+                    {t('coinflip_follow_suggestion')}
+                </button>
+                <button
+                    onClick={onClose}
+                    className="px-6 py-3.5 font-medium text-white/60 hover:text-white bg-white/5 hover:bg-white/10 rounded-xl transition-colors"
+                >
+                    {t('coinflip_ignore')}
+                </button>
+                </div>
             </div>
-            
-            <div className="space-y-3 pt-4">
-              <button
-                onClick={handleAcceptSuggestion}
-                className={`w-full py-4 ${result === 'heads' ? 'bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700' : 'bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700'} text-white font-bold text-lg rounded-xl shadow-xl transition-all active:scale-95`}
-              >
-                {t('coinflip_follow_suggestion')}
-              </button>
-              
-              <button
-                onClick={onClose}
-                className="w-full py-4 bg-slate-700 hover:bg-slate-600 text-white font-medium text-base rounded-xl transition-all active:scale-95"
-              >
-                {t('coinflip_ignore')}
-              </button>
-            </div>
-          </div>
-        )}
+            )}
+        </div>
+
       </div>
 
       <style>{`
-        .coin-wrapper {
-          perspective: 1500px;
-          position: relative;
+        .perspective-container {
+            perspective: 1200px;
+        }
+        
+        .scene {
+            transform-style: preserve-3d;
+        }
+
+        .coin-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            transform-style: preserve-3d;
         }
 
         .coin {
-          --coin-size: 210px;
-          --coin-thickness: 28px;
-          --coin-depth: calc(var(--coin-thickness) / 2);
-          position: relative;
-          width: var(--coin-size);
-          height: var(--coin-size);
-          transform-style: preserve-3d;
-          transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-          filter: drop-shadow(0 24px 35px rgba(0, 0, 0, 0.45));
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            /* Start position */
+            transform: rotateX(0deg); 
         }
 
-        .coin::before {
-          content: '';
-          position: absolute;
-          inset: -6px;
-          border-radius: 50%;
-          background: conic-gradient(from 90deg, #b45309, #f59e0b, #fbbf24, #b45309, #f59e0b);
-          transform: translateZ(-14px);
-          box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.35);
+        /* Az érme vastagsága (Layer stack technika) */
+        .coin-layer {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background-color: #b45309; /* Sötét arany az élhez */
+            border: 1px solid #92400e;
+            backface-visibility: visible; /* Fontos, hogy minden szögből látszódjon */
         }
-
-        .coin::after {
-          content: '';
-          position: absolute;
-          inset: 8px;
-          border-radius: 50%;
-          background: radial-gradient(circle, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0) 55%, rgba(0, 0, 0, 0.2));
-          transform: translateZ(14px);
-        }
-
-        .coin-edge {
-          position: absolute;
-          inset: -4px;
-          border-radius: 50%;
-          background: repeating-linear-gradient(90deg, #b45309 0px, #d97706 10px, #fbbf24 20px, #d97706 30px);
-          transform: translateZ(0px);
-          transform-style: preserve-3d;
-          box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.35), 0 8px 25px rgba(0, 0, 0, 0.25);
-        }
-
-        .coin-edge::before,
-        .coin-edge::after {
-          content: '';
-          position: absolute;
-          inset: 6px;
-          border-radius: 50%;
-          background: linear-gradient(180deg, #fcd34d 0%, #b45309 100%);
-          box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.25);
-        }
-
-        .coin-edge::before {
-          transform: translateZ(14px);
-        }
-
-        .coin-edge::after {
-          transform: translateZ(-14px);
-        }
-
-        /* Javított feldobás animáció - sokkal simább */
-        .flipping .coin {
-          animation: coinFlip 1.2s cubic-bezier(0.25, 0.1, 0.25, 1);
-        }
-
-        @keyframes coinFlip {
-          0% {
-            transform: translateY(0) translateZ(0) rotateY(0deg) rotateX(0deg);
-          }
-          15% {
-            transform: translateY(-200px) translateZ(50px) rotateY(540deg) rotateX(180deg) scale(1.15);
-          }
-          30% {
-            transform: translateY(-280px) translateZ(80px) rotateY(1080deg) rotateX(360deg) scale(1.2);
-          }
-          45% {
-            transform: translateY(-300px) translateZ(90px) rotateY(1620deg) rotateX(540deg) scale(1.25);
-          }
-          60% {
-            transform: translateY(-280px) translateZ(80px) rotateY(2160deg) rotateX(720deg) scale(1.2);
-          }
-          75% {
-            transform: translateY(-200px) translateZ(50px) rotateY(2700deg) rotateX(900deg) scale(1.15);
-          }
-          90% {
-            transform: translateY(-80px) translateZ(20px) rotateY(3240deg) rotateX(1080deg) scale(1.08);
-          }
-          100% {
-            transform: translateY(0) translateZ(0) rotateY(3600deg) rotateX(1200deg) scale(1);
-          }
-        }
-
-        /* Javított landolás animáció - simább pattogás */
-        .landed .coin {
-          animation: coinBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        @keyframes coinBounce {
-          0% {
-            transform: translateY(-40px) translateZ(10px) scale(1.15);
-          }
-          25% {
-            transform: translateY(0) translateZ(0) scale(0.95);
-          }
-          40% {
-            transform: translateY(-15px) translateZ(5px) scale(1.05);
-          }
-          60% {
-            transform: translateY(0) translateZ(0) scale(0.98);
-          }
-          75% {
-            transform: translateY(-5px) translateZ(2px) scale(1.02);
-          }
-          90% {
-            transform: translateY(0) translateZ(0) scale(0.99);
-          }
-          100% {
-            transform: translateY(0) translateZ(0) scale(1);
-          }
-        }
-
+        
+        /* Az érme lapjai */
         .coin-face {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          backface-visibility: hidden;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transform: translateZ(14px);
-          box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.35), 0 0 18px rgba(0, 0, 0, 0.18);
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            backface-visibility: hidden; /* Csak az egyik oldal látszik egyszerre */
+            /* Enyhe élsimítás */
+            -webkit-font-smoothing: antialiased; 
         }
 
-        .coin-heads {
-          transform: rotateY(0deg) translateZ(14px);
+        /* Árnyék a földön */
+        .shadow-element {
+            position: absolute;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%) rotateX(90deg);
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(rgba(0,0,0,0.6), transparent 70%);
+            border-radius: 50%;
+            opacity: 1;
+            transition: opacity 0.3s;
+            pointer-events: none;
         }
 
-        .coin-tails {
-          transform: rotateY(180deg) translateZ(14px);
+        /* --- ANIMÁCIÓK --- */
+
+        /* A FŐ DOBÁS */
+        .animate-toss .coin {
+            animation: tossCoin 2s cubic-bezier(0.2, 0, 0.3, 1) forwards;
         }
+
+        @keyframes tossCoin {
+            0% {
+                /* Lent kezd, kicsit döntve */
+                transform: translateY(0) rotateX(0) scale(1);
+                filter: brightness(1);
+            }
+            40% {
+                /* A levegőben: magasra megy, közelebb jön (scale), nagyon gyorsan pörög */
+                transform: translateY(-350px) rotateX(900deg) scale(1.4);
+                filter: brightness(1.3); /* Megcsillan a fényben */
+            }
+            100% {
+                /* Landolás: visszatér az eredeti Y helyre, és beáll a végső szögre */
+                transform: translateY(0) rotateX(var(--target-rotation)) scale(1);
+                filter: brightness(1);
+            }
+        }
+
+        /* ÁRNYÉK MOZGÁSA */
+        .animate-shadow-scale {
+            animation: shadowBreathe 2s cubic-bezier(0.2, 0, 0.3, 1) forwards;
+        }
+
+        @keyframes shadowBreathe {
+            0% { opacity: 0.8; transform: translateX(-50%) rotateX(90deg) scale(1); }
+            40% { opacity: 0.3; transform: translateX(-50%) rotateX(90deg) scale(0.5); } /* Ha magasan van, kicsi az árnyék */
+            100% { opacity: 0.8; transform: translateX(-50%) rotateX(90deg) scale(1); }
+        }
+
+        /* LANDOLÁS UTÁNI RUGÓZÁS */
+        .animate-land .coin {
+             /* Egy pici rugózás a végén, hogy ne legyen "beton" hatású */
+             animation: landBounce 0.4s ease-out;
+        }
+
+        @keyframes landBounce {
+            0% { transform: translateY(0) rotateX(var(--target-rotation)) scale(1); }
+            50% { transform: translateY(10px) rotateX(var(--target-rotation)) scale(0.95); }
+            100% { transform: translateY(0) rotateX(var(--target-rotation)) scale(1); }
+        }
+
       `}</style>
     </div>
   );
