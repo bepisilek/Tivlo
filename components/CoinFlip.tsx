@@ -22,7 +22,7 @@ export const CoinFlip: React.FC<CoinFlipProps> = ({ onSuggestion, onClose }) => 
     const randomValue = crypto.getRandomValues(new Uint32Array(1))[0];
     const random = randomValue % 2 === 0 ? 'heads' : 'tails';
     
-    // 3 másodperc múlva eredmény (hosszabb, simább animáció)
+    // 1.6 másodperc múlva eredmény (gyorsabb, dinamikusabb animáció)
     setTimeout(() => {
       setResult(random);
       setFlipState('result');
@@ -32,7 +32,7 @@ export const CoinFlip: React.FC<CoinFlipProps> = ({ onSuggestion, onClose }) => 
         setWinking(true);
         setTimeout(() => setWinking(false), 400);
       }, 200);
-    }, 3000);
+    }, 1600);
   };
 
   const handleAcceptSuggestion = () => {
@@ -203,11 +203,31 @@ export const CoinFlip: React.FC<CoinFlipProps> = ({ onSuggestion, onClose }) => 
           height: 210px;
           transform-style: preserve-3d;
           transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+          filter: drop-shadow(0 24px 35px rgba(0, 0, 0, 0.45));
+        }
+
+        .coin::before {
+          content: '';
+          position: absolute;
+          inset: -6px;
+          border-radius: 50%;
+          background: conic-gradient(from 90deg, #b45309, #f59e0b, #fbbf24, #b45309, #f59e0b);
+          transform: translateZ(-8px);
+          box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.35);
+        }
+
+        .coin::after {
+          content: '';
+          position: absolute;
+          inset: 8px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0) 55%, rgba(0, 0, 0, 0.2));
+          transform: translateZ(2px);
         }
 
         /* Javított feldobás animáció - sokkal simább */
         .flipping .coin {
-          animation: coinFlip 3s cubic-bezier(0.25, 0.1, 0.25, 1);
+          animation: coinFlip 1.6s cubic-bezier(0.25, 0.1, 0.25, 1);
         }
 
         @keyframes coinFlip {
@@ -274,14 +294,16 @@ export const CoinFlip: React.FC<CoinFlipProps> = ({ onSuggestion, onClose }) => 
           display: flex;
           align-items: center;
           justify-content: center;
+          transform: translateZ(10px);
+          box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.35), 0 0 18px rgba(0, 0, 0, 0.18);
         }
 
         .coin-heads {
-          transform: rotateY(0deg);
+          transform: rotateY(0deg) translateZ(10px);
         }
 
         .coin-tails {
-          transform: rotateY(180deg);
+          transform: rotateY(180deg) translateZ(10px);
         }
       `}</style>
     </div>
