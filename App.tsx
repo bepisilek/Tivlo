@@ -36,7 +36,7 @@ const App: React.FC = () => {
   const [settings, setSettings] = useState<UserSettings>(DEFAULT_SETTINGS);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [showSplash, setShowSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [previousView, setPreviousView] = useState<ViewState>(ViewState.CALCULATOR);
   const [showTour, setShowTour] = useState(false);
@@ -44,15 +44,21 @@ const App: React.FC = () => {
 
   // Splash Screen Logic
   useEffect(() => {
-    const splashShown = sessionStorage.getItem(SPLASH_SHOWN_KEY);
-    if (splashShown) {
+    if (!session) {
       setShowSplash(false);
+      return;
     }
-  }, []);
+
+    const splashShown = sessionStorage.getItem(SPLASH_SHOWN_KEY);
+    setShowSplash(!splashShown);
+  }, [session]);
 
   const handleSplashComplete = () => {
     sessionStorage.setItem(SPLASH_SHOWN_KEY, 'true');
     setShowSplash(false);
+    if (session) {
+      setViewState(ViewState.CALCULATOR);
+    }
   };
 
   // Initial Auth Check & Subscription
