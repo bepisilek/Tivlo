@@ -171,6 +171,12 @@ export const translations = {
     tag_bought: 'Megvétel',
     tag_saved: 'Spórolás',
     item_unnamed: 'Névtelen tétel',
+    edit: 'Szerkesztés',
+    edit_history_item: 'Bejegyzés szerkesztése',
+    edit_history_hint: 'A módosítás új tételként kerül mentésre.',
+    save_changes: 'Változtatások mentése',
+    decision_label: 'Döntés',
+    advice_label: 'Megjegyzés vagy tanács',
 
     // Levels
     level_label: 'Szint',
@@ -373,6 +379,12 @@ export const translations = {
     tag_bought: 'Bought',
     tag_saved: 'Saved',
     item_unnamed: 'Unnamed Item',
+    edit: 'Edit',
+    edit_history_item: 'Edit entry',
+    edit_history_hint: 'Edits are stored as a new journal entry.',
+    save_changes: 'Save changes',
+    decision_label: 'Decision',
+    advice_label: 'Note or advice',
 
     // Levels
     level_label: 'Level',
@@ -575,6 +587,12 @@ export const translations = {
     tag_bought: 'Gekauft',
     tag_saved: 'Gespart',
     item_unnamed: 'Unbenannter Artikel',
+    edit: 'Bearbeiten',
+    edit_history_item: 'Eintrag bearbeiten',
+    edit_history_hint: 'Änderungen werden als neuer Eintrag gespeichert.',
+    save_changes: 'Änderungen speichern',
+    decision_label: 'Entscheidung',
+    advice_label: 'Notiz oder Hinweis',
 
     // Levels
     level_label: 'Level',
