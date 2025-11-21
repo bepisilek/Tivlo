@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, User, Moon, Sun, LogOut, KeyRound, Trash2 } from 'lucide-react';
+import { X, User, Moon, Sun, LogOut, KeyRound, Trash2, Globe } from 'lucide-react';
 import { UserSettings } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 import { isSupabaseConfigured, supabase, SUPABASE_CONFIG_MESSAGE } from '../lib/supabaseClient';
@@ -14,16 +14,16 @@ interface SidebarProps {
   toggleTheme: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ 
-  isOpen, 
-  onClose, 
-  onOpenProfile, 
-  onOpenResetPassword, 
+export const Sidebar: React.FC<SidebarProps> = ({
+  isOpen,
+  onClose,
+  onOpenProfile,
+  onOpenResetPassword,
   onOpenDeleteAccount,
-  settings, 
-  toggleTheme 
+  settings,
+  toggleTheme
 }) => {
-  const { t } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
 
   const handleLogout = async () => {
     if (!supabase || !isSupabaseConfigured) {
@@ -64,10 +64,46 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div className="mb-6 px-2">
               <div className="text-xs text-slate-500 uppercase font-bold mb-1">{t('menu_profile')}</div>
               <div className="text-sm font-medium text-slate-900 dark:text-white">
-                  {settings.monthlyNetSalary > 0 
+                  {settings.monthlyNetSalary > 0
                     ? `${settings.monthlyNetSalary.toLocaleString()} ${settings.currency}`
                     : '...'}
               </div>
+          </div>
+
+          <div className="px-2 space-y-3 mb-4">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+                <Globe size={18} />
+                <span>{t('language')}</span>
+              </div>
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value as typeof language)}
+                className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="en">{t('language_english')}</option>
+                <option value="hu">{t('language_hungarian')}</option>
+                <option value="de">{t('language_german')}</option>
+              </select>
+            </div>
+
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+                {settings.theme === 'dark' ? <Moon size={18} /> : <Sun size={18} />}
+                <span>{t('appearance')}</span>
+              </div>
+              <button
+                onClick={toggleTheme}
+                className={`relative inline-flex h-9 w-16 items-center rounded-full transition-colors ${settings.theme === 'dark' ? 'bg-slate-700' : 'bg-amber-300'}`}
+                aria-label={settings.theme === 'dark' ? t('light_mode') : t('dark_mode')}
+              >
+                <span
+                  className={`absolute left-1 flex h-7 w-7 items-center justify-center rounded-full bg-white shadow-md transition-transform ${settings.theme === 'dark' ? 'translate-x-7' : 'translate-x-0'}`}
+                >
+                  {settings.theme === 'dark' ? <Moon size={16} className="text-slate-800" /> : <Sun size={16} className="text-amber-500" />}
+                </span>
+              </button>
+            </div>
           </div>
 
           <button
@@ -84,14 +120,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
           >
             <KeyRound size={20} />
             <span className="font-medium">{t('menu_reset_password')}</span>
-          </button>
-
-          <button 
-            onClick={toggleTheme}
-            className="w-full flex items-center gap-3 p-3 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-colors"
-          >
-            {settings.theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-            <span className="font-medium">{settings.theme === 'dark' ? t('light_mode') : t('dark_mode')}</span>
           </button>
 
           {/* Spacer */}
