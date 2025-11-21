@@ -187,8 +187,11 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                autoComplete={mode === 'register' ? 'email' : 'username'}
-                name={mode === 'register' ? 'email' : 'username'}
+                autoComplete="email"
+                inputMode="email"
+                autoCapitalize="none"
+                autoCorrect="off"
+                name="email"
                 id={`${mode}-email`}
                 className="block w-full pl-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-4 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm"
                 placeholder={t('auth_email')}
@@ -207,8 +210,11 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-                    name={mode === 'login' ? 'current-password' : 'new-password'}
+                    name={mode === 'login' ? 'password' : 'new-password'}
                     id={mode === 'login' ? 'current-password' : `${mode}-password`}
+                    inputMode="text"
+                    autoCapitalize="none"
+                    autoCorrect="off"
                     className="block w-full pl-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-4 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm"
                     placeholder={t('auth_password')}
                     minLength={6}
