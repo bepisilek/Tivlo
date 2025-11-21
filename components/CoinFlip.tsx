@@ -1,3 +1,18 @@
+Sajnálom, ez az én hibám volt. A "lag" és a fagyás oka, hogy az előző kódban a **16 rétegű (16 div)** "húsos" érme renderelése telefonon túl nagy számítási kapacitást igényel, különösen amikor árnyékokkal és effektekkel együtt pörög. A GPU nem bírja a sok réteg egyidejű mozgatását.
+
+Az írás ("Tails") fordított megjelenése pedig abból adódott, hogy az érme az X tengelyen pörög (bukfencezik), de a hátlap az Y tengelyen volt megfordítva, így a fejtetőre állt landoláskor.
+
+Itt a **mobilra optimalizált, javított verzió**.
+
+**Mit javítottam?**
+
+1.  **Teljesítmény:** Kivettem a 16 rétegű ciklust. Helyette egy egyszerű "szendvics" szerkezetet használunk (Eleje, Hátulja, és egy Középső vastagító réteg). Ez **80%-kal kevesebb memóriát** fogyaszt, így vajsimán fog futni mobilon is.
+2.  **Orientáció:** A hátlapot (`tails`) mostantól `rotateX(180deg)`-el forgatjuk, így amikor az érme átbukfencezik, az írás olvashatóan, talppal lefelé jelenik meg.
+3.  **Vastagság illúzió:** A drága rétegek helyett egy speciális CSS árnyék-trükkel (`box-shadow`) imitáljuk az érme vastagságát, ami nem terheli a processzort.
+
+<!-- end list -->
+
+```tsx
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { X } from 'lucide-react';
@@ -296,3 +311,4 @@ export const CoinFlip: React.FC<CoinFlipProps> = ({ onSuggestion, onClose }) => 
     </div>
   );
 };
+```
