@@ -13,10 +13,12 @@ import { AuthScreen } from './components/AuthScreen';
 import { OnboardingTour } from './components/OnboardingTour';
 import { ResetPassword } from './components/ResetPassword';
 import { DeleteAccount } from './components/DeleteAccount';
+import { SplashScreen } from './components/SplashScreen';
 import { UserSettings, ViewState, HistoryItem } from './types';
 import { useLanguage } from './contexts/LanguageContext';
 
 const TOUR_KEY = 'idopenz_tour_completed';
+const SPLASH_SHOWN_KEY = 'tivlo_splash_shown';
 
 const DEFAULT_SETTINGS: UserSettings = {
   monthlyNetSalary: 0,
@@ -34,10 +36,24 @@ const App: React.FC = () => {
   const [settings, setSettings] = useState<UserSettings>(DEFAULT_SETTINGS);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showSplash, setShowSplash] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [previousView, setPreviousView] = useState<ViewState>(ViewState.CALCULATOR);
   const [showTour, setShowTour] = useState(false);
   const [session, setSession] = useState<any>(null);
+
+  // Splash Screen Logic
+  useEffect(() => {
+    const splashShown = sessionStorage.getItem(SPLASH_SHOWN_KEY);
+    if (splashShown) {
+      setShowSplash(false);
+    }
+  }, []);
+
+  const handleSplashComplete = () => {
+    sessionStorage.setItem(SPLASH_SHOWN_KEY, 'true');
+    setShowSplash(false);
+  };
 
   // Initial Auth Check & Subscription
   useEffect(() => {
@@ -77,28 +93,18 @@ const App: React.FC = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Detect password recovery from URL - IMPROVED
+  // Detect password recovery from URL
   useEffect(() => {
-    // Check both regular query params and hash fragments
     const urlParams = new URLSearchParams(window.location.search);
     const hashParams = new URLSearchParams(window.location.hash.substring(1));
     
-    // Supabase sends tokens in hash fragment
     const type = urlParams.get('type') || hashParams.get('type');
     const accessToken = hashParams.get('access_token');
-    const refreshToken = hashParams.get('refresh_token');
-
-    console.log('URL Check:', { type, hasAccessToken: !!accessToken, hasRefreshToken: !!refreshToken });
 
     if (type === 'recovery' && accessToken) {
-      // User clicked password reset link
       setViewState(ViewState.RESET_PASSWORD);
-      // Clean URL
       window.history.replaceState({}, document.title, window.location.pathname);
     } else if (type === 'signup' || (type === 'email' && accessToken)) {
-      // Email confirmation link clicked
-      console.log('Email confirmation detected');
-      // Supabase will auto-handle the session, just clean URL
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, [session]);
@@ -117,18 +123,16 @@ const App: React.FC = () => {
     try {
         setIsLoading(true);
 
-        // 1. Fetch Profile
         const { data: profileData, error: profileError } = await supabase
             .from('profiles')
             .select('*')
             .eq('id', userId)
             .single();
 
-        if (profileError && profileError.code !== 'PGRST116') { // PGRST116 is "no row found"
+        if (profileError && profileError.code !== 'PGRST116') {
             console.error('Error fetching profile:', profileError);
         }
 
-        // 2. Fetch History
         const { data: historyData, error: historyError } = await supabase
             .from('history')
             .select('*')
@@ -139,7 +143,6 @@ const App: React.FC = () => {
              console.error('Error fetching history:', historyError);
         }
 
-        // Update State
         if (profileData) {
             const newSettings: UserSettings = {
                 monthlyNetSalary: profileData.monthly_net_salary || 0,
@@ -148,11 +151,10 @@ const App: React.FC = () => {
                 city: profileData.city || '',
                 age: profileData.age || 0,
                 theme: profileData.theme || 'dark',
-                isSetup: !!profileData.monthly_net_salary // Assume setup if salary exists
+                isSetup: !!profileData.monthly_net_salary
             };
             setSettings(newSettings);
             
-            // Map history data to frontend structure
             const mappedHistory: HistoryItem[] = (historyData || []).map((item: any) => ({
                 id: item.id,
                 productName: item.product_name,
@@ -165,10 +167,8 @@ const App: React.FC = () => {
             }));
             setHistory(mappedHistory);
 
-            // Determine next view
             if (newSettings.isSetup) {
                 setViewState(ViewState.CALCULATOR);
-                // Check Tour
                 const tourCompleted = localStorage.getItem(TOUR_KEY) === 'true';
                 if (!tourCompleted) setShowTour(true);
             } else {
@@ -176,7 +176,6 @@ const App: React.FC = () => {
             }
 
         } else {
-            // No profile row yet (rare if trigger works, but handle it)
             setViewState(ViewState.ONBOARDING);
         }
     } catch (error) {
@@ -234,7 +233,6 @@ const App: React.FC = () => {
 
   const toggleTheme = async () => {
       const newTheme = settings.theme === 'dark' ? 'light' : 'dark';
-      // Optimistic update
       setSettings(prev => ({ ...prev, theme: newTheme }));
 
       if (session && supabase) {
@@ -312,7 +310,6 @@ const App: React.FC = () => {
   };
 
   const handleDeleteSuccess = () => {
-      // User törlésre került, visszairányítás a welcome képernyőre
       setViewState(ViewState.WELCOME);
   };
 
@@ -332,6 +329,11 @@ const App: React.FC = () => {
     }
   };
 
+  // Splash Screen megjelenítése
+  if (showSplash) {
+    return <SplashScreen onComplete={handleSplashComplete} />;
+  }
+
   if (!isSupabaseConfigured) {
     return (
       <div className="min-h-screen bg-slate-950 text-slate-50 flex items-center justify-center p-6">
@@ -345,17 +347,18 @@ const App: React.FC = () => {
   }
 
   if (isLoading) {
-    return <div className="min-h-screen bg-slate-900 flex items-center justify-center text-blue-500 animate-pulse">{t('loading')}</div>;
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-slate-600 dark:text-slate-400">{t('loading')}</p>
+        </div>
+      </div>
+    );
   }
 
-  // Flow Logic:
-  // 1. Welcome Screen (if not auth)
-  // 2. Auth Screen
-  // 3. Onboarding/Settings (if auth but no profile)
-  // 4. Main App (if auth and profile)
-
   return (
-    <div className="h-full w-full bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-200 font-sans selection:bg-blue-500/30 overflow-hidden flex flex-col relative">
+    <div className="h-screen w-full bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-200 font-sans selection:bg-blue-500/30 overflow-hidden flex flex-col relative">
       
       {!session ? (
           viewState === ViewState.WELCOME ? (
@@ -374,12 +377,10 @@ const App: React.FC = () => {
                 />
             ) : (
                 <>
-                    {/* Tour Overlay */}
                     {showTour && viewState === ViewState.CALCULATOR && (
                         <OnboardingTour onComplete={handleTourComplete} />
                     )}
 
-                    {/* Sidebar Menu */}
                     <Sidebar
                         isOpen={isSidebarOpen}
                         onClose={() => setIsSidebarOpen(false)}
@@ -390,7 +391,6 @@ const App: React.FC = () => {
                         toggleTheme={toggleTheme}
                     />
 
-                    {/* Main Layout */}
                     {viewState === ViewState.SETTINGS ? (
                         <div className="flex flex-col h-full">
                             <TopBar title={t('settings_title')} onMenuClick={handleMenuClick} />
