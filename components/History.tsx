@@ -135,17 +135,14 @@ export const History: React.FC<HistoryProps> = ({ items, onClearHistory, onEditI
             <button
               aria-label={t('edit_history_item')}
               onClick={() => setEditingItem(item)}
-              className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 hover:text-blue-500"
+              className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity text-slate-500 hover:text-blue-600 bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 rounded-lg p-1.5 shadow-sm"
             >
-              <Pencil size={14} />
+              <Pencil size={18} />
             </button>
-            <div className="flex justify-between items-start mb-1">
+            <div className="flex items-start mb-1">
                 <h4 className="font-semibold text-sm md:text-base text-slate-900 dark:text-white pr-4 truncate w-2/3">
                     {item.productName || t('item_unnamed')}
                 </h4>
-                <span className="text-[10px] md:text-xs text-slate-500 font-medium whitespace-nowrap">
-                    {new Date(item.date).toLocaleDateString('hu-HU', { month: 'short', day: 'numeric' })}
-                </span>
             </div>
 
             <div className="flex justify-between items-end mt-2">
@@ -167,7 +164,10 @@ export const History: React.FC<HistoryProps> = ({ items, onClearHistory, onEditI
                  </div>
             )}
 
-            <div className="absolute top-2 right-2">
+            <span className="absolute top-2 right-2 text-[10px] md:text-xs text-slate-400 font-medium whitespace-nowrap opacity-60 z-0">
+                {new Date(item.date).toLocaleDateString('hu-HU', { month: 'short', day: 'numeric' })}
+            </span>
+            <div className="absolute top-2 right-2 z-10">
                 {item.decision === 'bought' ? (
                     <span className="px-1.5 md:px-2 py-0.5 bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 text-[9px] md:text-[10px] rounded-full font-bold uppercase tracking-wide">{t('tag_bought')}</span>
                 ) : (
