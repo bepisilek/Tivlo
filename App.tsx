@@ -12,6 +12,7 @@ import { WelcomeScreen } from './components/WelcomeScreen';
 import { AuthScreen } from './components/AuthScreen';
 import { OnboardingTour } from './components/OnboardingTour';
 import { ResetPassword } from './components/ResetPassword';
+import { DeleteAccount } from './components/DeleteAccount';
 import { UserSettings, ViewState, HistoryItem } from './types';
 import { useLanguage } from './contexts/LanguageContext';
 
@@ -305,6 +306,16 @@ const App: React.FC = () => {
       setViewState(previousView === ViewState.RESET_PASSWORD ? ViewState.CALCULATOR : previousView);
   };
 
+  const handleOpenDeleteAccount = () => {
+      setPreviousView(viewState);
+      setViewState(ViewState.DELETE_ACCOUNT);
+  };
+
+  const handleDeleteSuccess = () => {
+      // User törlésre került, visszairányítás a welcome képernyőre
+      setViewState(ViewState.WELCOME);
+  };
+
   const handleMenuClick = () => {
     setIsSidebarOpen(true);
   };
@@ -316,6 +327,7 @@ const App: React.FC = () => {
       case ViewState.LEVELS: return t('nav_levels');
       case ViewState.STATISTICS: return t('nav_statistics');
       case ViewState.RESET_PASSWORD: return t('reset_password_title');
+      case ViewState.DELETE_ACCOUNT: return t('delete_account_title');
       default: return t('app_name');
     }
   };
@@ -373,6 +385,7 @@ const App: React.FC = () => {
                         onClose={() => setIsSidebarOpen(false)}
                         onOpenProfile={handleOpenProfile}
                         onOpenResetPassword={handleOpenResetPassword}
+                        onOpenDeleteAccount={handleOpenDeleteAccount}
                         settings={settings}
                         toggleTheme={toggleTheme}
                     />
@@ -396,6 +409,16 @@ const App: React.FC = () => {
                             <div className="flex-1 overflow-hidden">
                                 <ResetPassword
                                     onSuccess={handleResetSuccess}
+                                    onCancel={() => setViewState(previousView)}
+                                />
+                            </div>
+                        </div>
+                    ) : viewState === ViewState.DELETE_ACCOUNT ? (
+                        <div className="flex flex-col h-full">
+                            <TopBar title={t('delete_account_title')} onMenuClick={handleMenuClick} />
+                            <div className="flex-1 overflow-hidden">
+                                <DeleteAccount
+                                    onSuccess={handleDeleteSuccess}
                                     onCancel={() => setViewState(previousView)}
                                 />
                             </div>
