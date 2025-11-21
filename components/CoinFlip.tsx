@@ -199,9 +199,12 @@ export const CoinFlip: React.FC<CoinFlipProps> = ({ onSuggestion, onClose }) => 
         }
 
         .coin {
+          --coin-size: 210px;
+          --coin-thickness: 28px;
+          --coin-depth: calc(var(--coin-thickness) / 2);
           position: relative;
-          width: 210px;
-          height: 210px;
+          width: var(--coin-size);
+          height: var(--coin-size);
           transform-style: preserve-3d;
           transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
           filter: drop-shadow(0 24px 35px rgba(0, 0, 0, 0.45));
