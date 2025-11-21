@@ -22,7 +22,7 @@ export const CoinFlip: React.FC<CoinFlipProps> = ({ onSuggestion, onClose }) => 
     const randomValue = crypto.getRandomValues(new Uint32Array(1))[0];
     const random = randomValue % 2 === 0 ? 'heads' : 'tails';
     
-    // 1.6 másodperc múlva eredmény (gyorsabb, dinamikusabb animáció)
+    // 1.2 másodperc múlva eredmény (gyorsabb, dinamikusabb animáció)
     setTimeout(() => {
       setResult(random);
       setFlipState('result');
@@ -32,7 +32,7 @@ export const CoinFlip: React.FC<CoinFlipProps> = ({ onSuggestion, onClose }) => 
         setWinking(true);
         setTimeout(() => setWinking(false), 400);
       }, 200);
-    }, 1600);
+    }, 1200);
   };
 
   const handleAcceptSuggestion = () => {
@@ -67,12 +67,13 @@ export const CoinFlip: React.FC<CoinFlipProps> = ({ onSuggestion, onClose }) => 
           <div 
             className={`coin-wrapper ${flipState === 'flipping' ? 'flipping' : ''} ${flipState === 'result' ? 'landed' : ''}`}
           >
-            <div 
+            <div
               className="coin"
               style={{
                 transform: flipState === 'result' && result === 'tails' ? 'rotateY(180deg)' : 'rotateY(0deg)'
               }}
             >
+              <div className="coin-edge" aria-hidden />
               {/* Heads (Fej - Megveszem) */}
               <div className="coin-face coin-heads">
                 <div className="w-52 h-52 bg-gradient-to-br from-amber-300 via-yellow-400 to-amber-500 rounded-full shadow-2xl flex items-center justify-center border-8 border-amber-600 relative overflow-hidden">
@@ -212,7 +213,7 @@ export const CoinFlip: React.FC<CoinFlipProps> = ({ onSuggestion, onClose }) => 
           inset: -6px;
           border-radius: 50%;
           background: conic-gradient(from 90deg, #b45309, #f59e0b, #fbbf24, #b45309, #f59e0b);
-          transform: translateZ(-8px);
+          transform: translateZ(-14px);
           box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.35);
         }
 
@@ -222,12 +223,40 @@ export const CoinFlip: React.FC<CoinFlipProps> = ({ onSuggestion, onClose }) => 
           inset: 8px;
           border-radius: 50%;
           background: radial-gradient(circle, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0) 55%, rgba(0, 0, 0, 0.2));
-          transform: translateZ(2px);
+          transform: translateZ(14px);
+        }
+
+        .coin-edge {
+          position: absolute;
+          inset: -4px;
+          border-radius: 50%;
+          background: repeating-linear-gradient(90deg, #b45309 0px, #d97706 10px, #fbbf24 20px, #d97706 30px);
+          transform: translateZ(0px);
+          transform-style: preserve-3d;
+          box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.35), 0 8px 25px rgba(0, 0, 0, 0.25);
+        }
+
+        .coin-edge::before,
+        .coin-edge::after {
+          content: '';
+          position: absolute;
+          inset: 6px;
+          border-radius: 50%;
+          background: linear-gradient(180deg, #fcd34d 0%, #b45309 100%);
+          box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.25);
+        }
+
+        .coin-edge::before {
+          transform: translateZ(14px);
+        }
+
+        .coin-edge::after {
+          transform: translateZ(-14px);
         }
 
         /* Javított feldobás animáció - sokkal simább */
         .flipping .coin {
-          animation: coinFlip 1.6s cubic-bezier(0.25, 0.1, 0.25, 1);
+          animation: coinFlip 1.2s cubic-bezier(0.25, 0.1, 0.25, 1);
         }
 
         @keyframes coinFlip {
@@ -294,16 +323,16 @@ export const CoinFlip: React.FC<CoinFlipProps> = ({ onSuggestion, onClose }) => 
           display: flex;
           align-items: center;
           justify-content: center;
-          transform: translateZ(10px);
+          transform: translateZ(14px);
           box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.35), 0 0 18px rgba(0, 0, 0, 0.18);
         }
 
         .coin-heads {
-          transform: rotateY(0deg) translateZ(10px);
+          transform: rotateY(0deg) translateZ(14px);
         }
 
         .coin-tails {
-          transform: rotateY(180deg) translateZ(10px);
+          transform: rotateY(180deg) translateZ(14px);
         }
       `}</style>
     </div>
