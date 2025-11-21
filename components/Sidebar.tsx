@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, User, Moon, Sun, LogOut, KeyRound } from 'lucide-react';
+import { X, User, Moon, Sun, LogOut, KeyRound, Trash2 } from 'lucide-react';
 import { UserSettings } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 import { isSupabaseConfigured, supabase, SUPABASE_CONFIG_MESSAGE } from '../lib/supabaseClient';
@@ -9,11 +9,20 @@ interface SidebarProps {
   onClose: () => void;
   onOpenProfile: () => void;
   onOpenResetPassword: () => void;
+  onOpenDeleteAccount: () => void;
   settings: UserSettings;
   toggleTheme: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenProfile, onOpenResetPassword, settings, toggleTheme }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ 
+  isOpen, 
+  onClose, 
+  onOpenProfile, 
+  onOpenResetPassword, 
+  onOpenDeleteAccount,
+  settings, 
+  toggleTheme 
+}) => {
   const { t } = useLanguage();
 
   const handleLogout = async () => {
@@ -84,6 +93,20 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenProfile
             {settings.theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
             <span className="font-medium">{settings.theme === 'dark' ? t('light_mode') : t('dark_mode')}</span>
           </button>
+
+          {/* Spacer */}
+          <div className="py-2"></div>
+
+          {/* Delete Account - Veszélyes műveletek szekció */}
+          <div className="pt-2 border-t border-slate-200 dark:border-slate-800">
+            <button
+              onClick={() => { onOpenDeleteAccount(); onClose(); }}
+              className="w-full flex items-center gap-3 p-3 text-slate-500 dark:text-slate-400 hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:text-rose-600 dark:hover:text-rose-400 rounded-xl transition-colors"
+            >
+              <Trash2 size={20} />
+              <span className="font-medium text-sm">{t('menu_delete_account')}</span>
+            </button>
+          </div>
         </div>
         
         <div className="p-4 border-t border-slate-100 dark:border-slate-800">
