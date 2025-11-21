@@ -1,20 +1,18 @@
 import React, { useState } from 'react';
 import { UserSettings } from '../types';
 import { Button } from './Button';
-import { Briefcase, Wallet, Clock, Sun, Moon, Globe, ChevronDown, MapPin, Calendar } from 'lucide-react';
+import { Briefcase, Wallet, Clock, ChevronDown, MapPin, Calendar } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
-import { Language } from '../utils/translations';
 
 interface SettingsFormProps {
   initialSettings: UserSettings;
   onSave: (settings: UserSettings) => Promise<void> | void;
   isFirstTime?: boolean;
-  toggleTheme: () => void;
   onCancel?: () => void;
 }
 
-export const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, onSave, isFirstTime = false, toggleTheme, onCancel }) => {
-  const { t, language, setLanguage } = useLanguage();
+export const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, onSave, isFirstTime = false, onCancel }) => {
+  const { t } = useLanguage();
   const [netSalary, setNetSalary] = useState<string>(initialSettings.monthlyNetSalary === 0 ? '' : initialSettings.monthlyNetSalary.toString());
   const [hours, setHours] = useState<string>(initialSettings.weeklyHours === 0 ? '40' : initialSettings.weeklyHours.toString());
   const [currency, setCurrency] = useState<string>(initialSettings.currency || 'HUF');
@@ -64,36 +62,6 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, onS
 
           <form onSubmit={handleSubmit} className="space-y-5 flex-1 flex flex-col">
             
-            {/* Language & Theme Group */}
-            <div className="grid grid-cols-2 gap-4">
-                 <div className="space-y-1">
-                   <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 ml-1">{t('language')}</label>
-                   <div className="relative">
-                      <select
-                          value={language}
-                          onChange={(e) => setLanguage(e.target.value as Language)}
-                          className="block w-full appearance-none bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-3 px-4 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm shadow-sm"
-                      >
-                          <option value="hu">Magyar</option>
-                          <option value="en">English</option>
-                      </select>
-                   </div>
-                </div>
-                {!isFirstTime && (
-                     <div className="space-y-1">
-                        <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 ml-1">{t('appearance')}</label>
-                        <button 
-                            type="button"
-                            onClick={toggleTheme}
-                            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm text-sm font-medium text-slate-900 dark:text-white"
-                        >
-                            {initialSettings.theme === 'dark' ? <Moon size={16} /> : <Sun size={16} />}
-                            <span>{t('switch')}</span>
-                        </button>
-                    </div>
-                )}
-            </div>
-
             {/* Personal Details */}
             <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">

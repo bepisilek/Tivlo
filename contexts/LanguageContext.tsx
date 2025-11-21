@@ -14,7 +14,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   useEffect(() => {
     const storedLang = localStorage.getItem('idopenz_language') as Language;
-    if (storedLang) {
+    if (storedLang && translations[storedLang]) {
       setLanguageState(storedLang);
     } else {
       // IP Detection
@@ -22,17 +22,25 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         try {
           const response = await fetch('https://ipapi.co/json/');
           const data = await response.json();
-          if (data && data.country_code === 'HU') {
-            setLanguage( 'hu');
+          if (data) {
+            if (data.country_code === 'HU') {
+              setLanguage('hu');
+            } else if (['DE', 'AT', 'CH'].includes(data.country_code)) {
+              setLanguage('de');
+            } else {
+              setLanguage('en');
+            }
           } else {
             setLanguage('en');
           }
         } catch (error) {
           console.warn('Failed to detect country, defaulting to English', error);
           // Fallback: Check navigator language
-          const navLang = navigator.language;
+          const navLang = navigator.language.toLowerCase();
           if (navLang.startsWith('hu')) {
             setLanguage('hu');
+          } else if (navLang.startsWith('de')) {
+            setLanguage('de');
           } else {
             setLanguage('en');
           }

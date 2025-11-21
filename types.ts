@@ -39,4 +39,4 @@ export interface HistoryItem {
   adviceUsed?: string;
 }
 
-export type Language = 'hu' | 'en';
+export type Language = 'hu' | 'en' | 'de';

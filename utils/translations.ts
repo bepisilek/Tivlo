@@ -1,4 +1,4 @@
-export type Language = 'hu' | 'en';
+export type Language = 'hu' | 'en' | 'de';
 
 export const translations = {
   hu: {
@@ -10,7 +10,7 @@ export const translations = {
     close: 'Bezárás',
     next: 'Tovább',
     finish: 'Befejezés',
-    
+
     // Welcome
     welcome_slogan: 'Ne pazarold az életed.',
     welcome_sub: 'Tudd meg, valójában mennyibe kerülnek a dolgok.',
@@ -44,7 +44,7 @@ export const translations = {
     auth_email_not_confirmed: 'Az email címed még nincs megerősítve. Ellenőrizd a postaládád!',
     auth_email_already_exists: 'Ez az email cím már regisztrálva van. Próbálj bejelentkezni!',
     auth_logout: 'Kijelentkezés',
-    
+
     // Marketing Opt-in
     marketing_opt_in_text: 'Szeretnék hírlevelet és speciális ajánlatokat kapni emailben.',
     marketing_opt_in_subtitle: 'Bármikor leiratkozhatsz. Adataid biztonságban vannak.',
@@ -81,13 +81,13 @@ export const translations = {
     tour_stat_desc: 'Nézd meg, mennyit spóroltál vagy költöttél az elmúlt időszakban.',
     tour_level_title: 'Szintek & Jelvények',
     tour_level_desc: 'Gyűjts jelvényeket és lépj szinteket a tudatos döntéseiddel!',
-    
+
     // Navigation
     nav_calculator: 'Számoló',
     nav_history: 'Napló',
     nav_statistics: 'Statisztika',
     nav_levels: 'Szintek',
-    
+
     // Settings / Onboarding
     settings_title_first: 'Állítsuk be a profilod',
     settings_title: 'Profil Beállítások',
@@ -98,6 +98,9 @@ export const translations = {
     light_mode: 'Világos mód',
     switch: 'Váltás',
     language: 'Nyelv',
+    language_english: 'Angol',
+    language_hungarian: 'Magyar',
+    language_german: 'Német',
     monthly_salary: 'Havi nettó bér',
     weekly_hours: 'Heti munkaórák',
     city: 'Település',
@@ -131,7 +134,7 @@ export const translations = {
     save_btn: 'Megspórolom',
     new_calculation: 'Új számítás',
     cant_decide: 'Nem tudok dönteni',
-    
+
     // Coin Flip
     coinflip_title: 'Fej vagy Írás?',
     coinflip_subtitle: 'Dobd fel az érmét és nézd meg mire jut!',
@@ -147,7 +150,7 @@ export const translations = {
     coinflip_follow_suggestion: 'Követem a javaslatot',
     coinflip_ignore: 'Figyelmen kívül hagyom',
     coinflip_suggestion_label: '💡 Az érme javasolta',
-    
+
     // Feedback Modals
     feedback_saved_title: 'Ez az!',
     feedback_saved_desc: 'Megspóroltál',
@@ -157,7 +160,7 @@ export const translations = {
     feedback_bought_desc: 'Ez a tétel pontosan',
     feedback_bought_suffix: 'munkádba került.',
     thanks_btn: 'Köszönöm, értem',
-    
+
     // History
     history_empty_title: 'Még nincs előzmény',
     history_empty_desc: 'Használd a számolót és döntsd el, hogy megveszel-e valamit vagy megspórolod.',
@@ -168,7 +171,7 @@ export const translations = {
     tag_bought: 'Megvétel',
     tag_saved: 'Spórolás',
     item_unnamed: 'Névtelen tétel',
-    
+
     // Levels
     level_label: 'Szint',
     conscious_buyer: 'Tudatos Vásárló',
@@ -177,7 +180,7 @@ export const translations = {
     count_db: 'db',
     count_label: 'Spórolás',
     badges_title: 'Kitüntetések',
-    
+
     // Badges
     badge_first_save_name: 'Kezdő Tudatos',
     badge_first_save_desc: 'Az első megspórolt tétel.',
@@ -211,9 +214,9 @@ export const translations = {
     finish: 'Finish',
 
     // Welcome
-    welcome_slogan: 'Don\'t waste your life.',
+    welcome_slogan: "Don't waste your life.",
     welcome_sub: 'Find out what things really cost you.',
-    lets_start: 'Let\'s Start',
+    lets_start: "Let's Start",
 
     // Auth
     auth_login_title: 'Welcome back!',
@@ -221,7 +224,7 @@ export const translations = {
     auth_register_title: 'Join us',
     auth_register_subtitle: 'Create a free account',
     auth_forgot_title: 'Reset password',
-    auth_forgot_subtitle: 'We\'ll send you a reset link',
+    auth_forgot_subtitle: "We'll send you a reset link",
     auth_email: 'Email Address',
     auth_password: 'Password',
     auth_confirm_password: 'Confirm Password',
@@ -243,7 +246,7 @@ export const translations = {
     auth_email_not_confirmed: 'Your email is not confirmed yet. Check your inbox!',
     auth_email_already_exists: 'This email is already registered. Try logging in!',
     auth_logout: 'Log Out',
-    
+
     // Marketing Opt-in
     marketing_opt_in_text: 'I want to receive newsletters and special offers via email.',
     marketing_opt_in_subtitle: 'You can unsubscribe at any time. Your data is safe.',
@@ -288,7 +291,7 @@ export const translations = {
     nav_levels: 'Levels',
 
     // Settings / Onboarding
-    settings_title_first: 'Let\'s set up your profile',
+    settings_title_first: "Let's set up your profile",
     settings_title: 'Profile Settings',
     settings_desc_first: 'Data is stored securely in the cloud.',
     settings_desc: 'Modify your salary and details here.',
@@ -297,6 +300,9 @@ export const translations = {
     light_mode: 'Light Mode',
     switch: 'Switch',
     language: 'Language',
+    language_english: 'English',
+    language_hungarian: 'Hungarian',
+    language_german: 'German',
     monthly_salary: 'Monthly Net Salary',
     weekly_hours: 'Weekly Hours',
     city: 'City / Town',
@@ -329,8 +335,8 @@ export const translations = {
     buy_sub: 'work',
     save_btn: 'Save It',
     new_calculation: 'New Calculation',
-    cant_decide: 'Can\'t decide',
-    
+    cant_decide: "Can't decide",
+
     // Coin Flip
     coinflip_title: 'Heads or Tails?',
     coinflip_subtitle: 'Flip the coin and see what it suggests!',
@@ -398,5 +404,207 @@ export const translations = {
     stats_saved_time: 'Saved Work Time',
     stats_spent_time: 'Spent Work Time',
     stats_decision_count: 'You made {count} decisions in this period.',
+  },
+  de: {
+    // General
+    app_name: 'Tivlo',
+    loading: 'Laden...',
+    save: 'Speichern',
+    cancel: 'Abbrechen',
+    close: 'Schließen',
+    next: 'Weiter',
+    finish: 'Fertigstellen',
+
+    // Welcome
+    welcome_slogan: 'Verschwende dein Leben nicht.',
+    welcome_sub: 'Finde heraus, was Dinge dich wirklich kosten.',
+    lets_start: 'Los geht\'s',
+
+    // Auth
+    auth_login_title: 'Willkommen zurück!',
+    auth_login_subtitle: 'Melde dich in deinem Konto an',
+    auth_register_title: 'Mach mit',
+    auth_register_subtitle: 'Erstelle ein kostenloses Konto',
+    auth_forgot_title: 'Passwort zurücksetzen',
+    auth_forgot_subtitle: 'Wir senden dir einen Link',
+    auth_email: 'E-Mail-Adresse',
+    auth_password: 'Passwort',
+    auth_confirm_password: 'Passwort bestätigen',
+    auth_login_btn: 'Anmelden',
+    auth_register_btn: 'Registrieren',
+    auth_forgot_btn: 'Link senden',
+    auth_switch_to_register: 'Noch kein Konto? Registriere dich!',
+    auth_switch_to_login: 'Schon ein Konto? Anmelden!',
+    auth_back_to_login: 'Zurück zum Login',
+    auth_error: 'Es ist ein Fehler aufgetreten. Bitte überprüfe deine Angaben.',
+    auth_magic_link_sent: 'Prüfe deine E-Mails für den Bestätigungslink!',
+    auth_confirmation_sent: 'Registrierung erfolgreich! Prüfe deine E-Mails, um dein Konto zu bestätigen.',
+    auth_registration_success: 'Erfolgreich registriert! Willkommen!',
+    auth_forgot_password: 'Passwort vergessen?',
+    auth_reset_email_required: 'Gib deine E-Mail ein, um dein Passwort zurückzusetzen.',
+    auth_reset_email_sent: 'Prüfe deine E-Mails! Wir haben dir einen Link geschickt.',
+    auth_password_mismatch: 'Die Passwörter stimmen nicht überein.',
+    auth_invalid_credentials: 'Ungültige E-Mail oder ungültiges Passwort.',
+    auth_email_not_confirmed: 'Deine E-Mail ist noch nicht bestätigt. Prüfe deinen Posteingang!',
+    auth_email_already_exists: 'Diese E-Mail ist bereits registriert. Versuche, dich anzumelden!',
+    auth_logout: 'Abmelden',
+
+    // Marketing Opt-in
+    marketing_opt_in_text: 'Ich möchte Newsletter und spezielle Angebote per E-Mail erhalten.',
+    marketing_opt_in_subtitle: 'Du kannst dich jederzeit abmelden. Deine Daten sind sicher.',
+    marketing_settings_title: 'Marketing-Einstellungen',
+    marketing_status_opted_in: 'Für Newsletter angemeldet',
+    marketing_status_opted_out: 'Nicht angemeldet',
+    marketing_change_consent: 'Einwilligung ändern',
+    marketing_unsubscribe: 'Abmelden',
+    marketing_subscribe: 'Anmelden',
+    marketing_consent_updated: 'Marketing-Einstellungen aktualisiert!',
+
+    // Delete Account
+    delete_account_title: 'Konto und Daten löschen',
+    delete_account_desc: 'Diese Aktion löscht dein Konto und alle Daten dauerhaft. Dies kann nicht rückgängig gemacht werden.',
+    delete_account_warning: 'Warnung! Folgendes wird gelöscht:',
+    delete_account_list_profile: 'Alle Profildaten (Gehalt, Einstellungen)',
+    delete_account_list_history: 'Deine komplette Kaufhistorie',
+    delete_account_list_stats: 'Deine Statistiken und Abzeichen',
+    delete_account_list_auth: 'Deine Anmeldedaten (E-Mail, Passwort)',
+    delete_account_confirm_label: 'Gib Folgendes ein, um zu bestätigen:',
+    delete_account_confirm_text: 'MEIN KONTO LÖSCHEN',
+    delete_account_button: 'Mein Konto dauerhaft löschen',
+    delete_account_success: 'Dein Konto und alle Daten wurden erfolgreich gelöscht.',
+    delete_account_error: 'Beim Löschen deines Kontos ist ein Fehler aufgetreten. Bitte versuche es später noch einmal.',
+
+    // Tour
+    tour_welcome_title: 'Willkommen bei Tivlo!',
+    tour_welcome_desc: 'Hier ist eine kurze Tour, damit du das Beste aus der App herausholst.',
+    tour_calc_title: 'Der Umrechner',
+    tour_calc_desc: 'Gib hier einen Preis ein und sieh sofort, wie viele Arbeitsstunden er kostet.',
+    tour_hist_title: 'Journal',
+    tour_hist_desc: 'Verfolge hier deine vergangenen Entscheidungen.',
+    tour_stat_title: 'Statistiken',
+    tour_stat_desc: 'Sieh, wie viel du im Laufe der Zeit gespart oder ausgegeben hast.',
+    tour_level_title: 'Level & Abzeichen',
+    tour_level_desc: 'Verdiene Abzeichen und steigere dein Level mit bewussten Entscheidungen!',
+
+    // Navigation
+    nav_calculator: 'Rechner',
+    nav_history: 'Journal',
+    nav_statistics: 'Statistiken',
+    nav_levels: 'Level',
+
+    // Settings / Onboarding
+    settings_title_first: 'Lass uns dein Profil einrichten',
+    settings_title: 'Profileinstellungen',
+    settings_desc_first: 'Daten werden sicher in der Cloud gespeichert.',
+    settings_desc: 'Ändere hier dein Gehalt und deine Angaben.',
+    appearance: 'Darstellung',
+    dark_mode: 'Dunkelmodus',
+    light_mode: 'Hellmodus',
+    switch: 'Wechseln',
+    language: 'Sprache',
+    language_english: 'Englisch',
+    language_hungarian: 'Ungarisch',
+    language_german: 'Deutsch',
+    monthly_salary: 'Monatliches Nettogehalt',
+    weekly_hours: 'Wochenstunden',
+    city: 'Stadt / Ort',
+    age: 'Alter',
+    currency: 'Währung',
+    start_btn: 'Profil speichern',
+    save_settings_btn: 'Einstellungen speichern',
+    menu_profile: 'Aktuelles Profil',
+    menu_edit_profile: 'Profil bearbeiten',
+    menu_reset_password: 'Passwort ändern',
+    menu_delete_account: 'Konto löschen',
+
+    // Reset Password
+    reset_password_title: 'Neues Passwort festlegen',
+    reset_password_desc: 'Gib ein neues Passwort für dein Konto ein.',
+    reset_password_button: 'Passwort speichern',
+    reset_password_success: 'Dein Passwort wurde erfolgreich aktualisiert!',
+    reset_password_mismatch: 'Die Passwörter stimmen nicht überein.',
+
+    // Calculator
+    hourly_rate: 'Stundenlohn',
+    what_to_buy: 'Was möchtest du kaufen?',
+    placeholder_item: 'z.B. Neues Telefon, Kaffee',
+    price_label: 'Preis',
+    calculate_btn: 'Berechnen',
+    cost_in_life: 'Kosten in Arbeitszeit',
+    hour_short: 'Std',
+    min_short: 'Min',
+    buy_btn: 'Kaufen',
+    buy_sub: 'Arbeit',
+    save_btn: 'Sparen',
+    new_calculation: 'Neue Berechnung',
+    cant_decide: 'Kann mich nicht entscheiden',
+
+    // Coin Flip
+    coinflip_title: 'Kopf oder Zahl?',
+    coinflip_subtitle: 'Wirf die Münze und sieh dir den Vorschlag an!',
+    coinflip_heads: 'KOPF',
+    coinflip_tails: 'ZAHL',
+    coinflip_heads_means: 'Kauf es',
+    coinflip_tails_means: 'Spar es',
+    coinflip_flip_it: '🪙 Werfen!',
+    coinflip_flipping: 'Wirf...',
+    coinflip_suggests: 'Die Münze schlägt vor:',
+    coinflip_result_buy: 'Kauf es',
+    coinflip_result_save: 'Spar es',
+    coinflip_follow_suggestion: 'Vorschlag folgen',
+    coinflip_ignore: 'Ignorieren',
+    coinflip_suggestion_label: '💡 Münze schlug vor',
+
+    // Feedback Modals
+    feedback_saved_title: 'Super!',
+    feedback_saved_desc: 'Du hast gespart',
+    feedback_saved_time: 'Das wären gewesen',
+    feedback_saved_time_suffix: 'Arbeit.',
+    feedback_bought_title: 'Erfasst',
+    feedback_bought_desc: 'Dieser Artikel hat dich genau',
+    feedback_bought_suffix: 'deiner Arbeit gekostet.',
+    thanks_btn: 'Verstanden, danke',
+
+    // History
+    history_empty_title: 'Noch keine Historie',
+    history_empty_desc: 'Nutze den Rechner, um zu entscheiden, ob du kaufen oder sparen möchtest.',
+    saved_stat: 'Gespart',
+    spent_stat: 'Ausgegeben',
+    clear_history: 'Verlauf löschen',
+    clear_confirm: 'Bist du sicher, dass du den gesamten Verlauf löschen möchtest?',
+    tag_bought: 'Gekauft',
+    tag_saved: 'Gespart',
+    item_unnamed: 'Unbenannter Artikel',
+
+    // Levels
+    level_label: 'Level',
+    conscious_buyer: 'Bewusster Käufer',
+    streak_days: 'Tage',
+    streak_label: 'Serie',
+    count_db: '',
+    count_label: 'Ersparnisse',
+    badges_title: 'Abzeichen',
+
+    // Badges
+    badge_first_save_name: 'Erster Schritt',
+    badge_first_save_desc: 'Dein erster gesparter Artikel.',
+    badge_five_saves_name: 'High Five',
+    badge_five_saves_desc: 'Du hast dich 5 Mal für Sparen entschieden.',
+    badge_ten_hours_name: 'Zeitgewinner',
+    badge_ten_hours_desc: '10 Stunden Arbeitszeit gespart.',
+    badge_streak_3_name: 'In Fahrt',
+    badge_streak_3_desc: '3-tägige Sparserie.',
+    badge_hundred_hours_name: 'Zeit-Millionär',
+    badge_hundred_hours_desc: 'Über 100 Stunden gespart.',
+    badge_status_unlocked: 'Freigeschaltet',
+    badge_status_locked: 'Gesperrt',
+
+    // Statistics
+    stats_period: 'Zeitraum',
+    stats_kept: 'Behalten',
+    stats_spent: 'Ausgegeben',
+    stats_saved_time: 'Gesparte Arbeitszeit',
+    stats_spent_time: 'Aufgewendete Arbeitszeit',
+    stats_decision_count: 'Du hast in diesem Zeitraum {count} Entscheidungen getroffen.',
   }
 };

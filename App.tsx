@@ -369,11 +369,10 @@ const App: React.FC = () => {
       ) : (
         <>
             {viewState === ViewState.ONBOARDING ? (
-                 <SettingsForm 
-                    initialSettings={settings} 
-                    onSave={handleSaveSettings} 
+                 <SettingsForm
+                    initialSettings={settings}
+                    onSave={handleSaveSettings}
                     isFirstTime={true}
-                    toggleTheme={toggleTheme}
                 />
             ) : (
                 <>
@@ -395,13 +394,12 @@ const App: React.FC = () => {
                         <div className="flex flex-col h-full">
                             <TopBar title={t('settings_title')} onMenuClick={handleMenuClick} />
                             <div className="flex-1 overflow-hidden">
-                                <SettingsForm
-                                    initialSettings={settings}
-                                    onSave={handleSaveSettings}
-                                    toggleTheme={toggleTheme}
-                                    onCancel={() => setViewState(previousView)}
-                                />
-                            </div>
+                        <SettingsForm
+                            initialSettings={settings}
+                            onSave={handleSaveSettings}
+                            onCancel={() => setViewState(previousView)}
+                        />
+                    </div>
                         </div>
                     ) : viewState === ViewState.RESET_PASSWORD ? (
                         <div className="flex flex-col h-full">
