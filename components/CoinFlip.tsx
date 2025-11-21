@@ -74,7 +74,6 @@ export const CoinFlip: React.FC<CoinFlipProps> = ({ onSuggestion, onClose }) => 
               }}
             >
               <div className="coin-edge" aria-hidden />
-              <div className="coin-thickness" aria-hidden />
               {/* Heads (Fej - Megveszem) */}
               <div className="coin-face coin-heads">
                 <div className="w-52 h-52 bg-gradient-to-br from-amber-300 via-yellow-400 to-amber-500 rounded-full shadow-2xl flex items-center justify-center border-8 border-amber-600 relative overflow-hidden">
@@ -217,7 +216,7 @@ export const CoinFlip: React.FC<CoinFlipProps> = ({ onSuggestion, onClose }) => 
           inset: -6px;
           border-radius: 50%;
           background: conic-gradient(from 90deg, #b45309, #f59e0b, #fbbf24, #b45309, #f59e0b);
-          transform: translateZ(calc(var(--coin-depth) * -1));
+          transform: translateZ(-14px);
           box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.35);
         }
 
@@ -227,7 +226,7 @@ export const CoinFlip: React.FC<CoinFlipProps> = ({ onSuggestion, onClose }) => 
           inset: 8px;
           border-radius: 50%;
           background: radial-gradient(circle, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0) 55%, rgba(0, 0, 0, 0.2));
-          transform: translateZ(var(--coin-depth));
+          transform: translateZ(14px);
         }
 
         .coin-edge {
@@ -251,31 +250,11 @@ export const CoinFlip: React.FC<CoinFlipProps> = ({ onSuggestion, onClose }) => 
         }
 
         .coin-edge::before {
-          transform: translateZ(var(--coin-depth));
+          transform: translateZ(14px);
         }
 
         .coin-edge::after {
-          transform: translateZ(calc(var(--coin-depth) * -1));
-        }
-
-        .coin-thickness {
-          position: absolute;
-          width: var(--coin-size);
-          height: var(--coin-thickness);
-          left: 50%;
-          top: 50%;
-          transform: translate(-50%, -50%) rotateX(90deg);
-          transform-style: preserve-3d;
-          background: repeating-linear-gradient(
-            90deg,
-            #92400e 0px,
-            #b45309 10px,
-            #f59e0b 20px,
-            #b45309 30px
-          );
-          border-radius: 50%;
-          box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.35), 0 6px 18px rgba(0, 0, 0, 0.28);
-          filter: saturate(1.1);
+          transform: translateZ(-14px);
         }
 
         /* Javított feldobás animáció - sokkal simább */
@@ -347,16 +326,16 @@ export const CoinFlip: React.FC<CoinFlipProps> = ({ onSuggestion, onClose }) => 
           display: flex;
           align-items: center;
           justify-content: center;
-          transform: translateZ(var(--coin-depth));
+          transform: translateZ(14px);
           box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.35), 0 0 18px rgba(0, 0, 0, 0.18);
         }
 
         .coin-heads {
-          transform: rotateY(0deg) translateZ(var(--coin-depth));
+          transform: rotateY(0deg) translateZ(14px);
         }
 
         .coin-tails {
-          transform: rotateY(180deg) translateZ(var(--coin-depth));
+          transform: rotateY(180deg) translateZ(14px);
         }
       `}</style>
     </div>
