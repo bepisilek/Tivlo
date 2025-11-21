@@ -278,6 +278,49 @@ const App: React.FC = () => {
       }
   };
 
+  const handleEditHistory = async (originalId: string, updatedItem: Omit<HistoryItem, 'id' | 'date'>) => {
+      if (!session || !supabase) return;
+
+      try {
+          const dbItem = {
+              user_id: session.user.id,
+              product_name: updatedItem.productName,
+              price: updatedItem.price,
+              currency: updatedItem.currency,
+              total_hours_decimal: updatedItem.totalHoursDecimal,
+              decision: updatedItem.decision,
+              advice_used: updatedItem.adviceUsed,
+              date: new Date().toISOString()
+          };
+
+          const { data, error } = await supabase.from('history').insert(dbItem).select().single();
+
+          if (error) throw error;
+
+          if (data) {
+              const newItem: HistoryItem = {
+                  id: data.id,
+                  productName: data.product_name,
+                  price: data.price,
+                  currency: data.currency,
+                  totalHoursDecimal: data.total_hours_decimal,
+                  decision: data.decision,
+                  date: data.date,
+                  adviceUsed: data.advice_used
+              };
+              setHistory(prev => [newItem, ...prev.filter(item => item.id !== originalId)]);
+          }
+
+          const { error: deleteError } = await supabase.from('history').delete().eq('id', originalId);
+          if (deleteError) {
+              console.error('Error deleting old history item:', deleteError);
+          }
+
+      } catch (error) {
+          console.error('Error editing history:', error);
+      }
+  };
+
   const handleClearHistory = async () => {
       if (!session || !supabase) return;
       if(confirm(t('clear_confirm'))) {
@@ -434,7 +477,7 @@ const App: React.FC = () => {
                                 )}
 
                                 {viewState === ViewState.HISTORY && (
-                                    <History items={history} onClearHistory={handleClearHistory} />
+                                    <History items={history} onClearHistory={handleClearHistory} onEditItem={handleEditHistory} />
                                 )}
 
                                 {viewState === ViewState.STATISTICS && (
