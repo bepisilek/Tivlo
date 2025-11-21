@@ -18,10 +18,11 @@ export const CoinFlip: React.FC<CoinFlipProps> = ({ onSuggestion, onClose }) => 
   const handleFlip = () => {
     setFlipState('flipping');
     
-    // Random eredmény
-    const random = Math.random() > 0.5 ? 'heads' : 'tails';
+    // Tényleg random eredmény - crypto.getRandomValues használata a biztonságos véletlenhez
+    const randomValue = crypto.getRandomValues(new Uint32Array(1))[0];
+    const random = randomValue % 2 === 0 ? 'heads' : 'tails';
     
-    // 2.5 másodperc múlva eredmény (levegőben pörög)
+    // 3 másodperc múlva eredmény (hosszabb, simább animáció)
     setTimeout(() => {
       setResult(random);
       setFlipState('result');
@@ -31,7 +32,7 @@ export const CoinFlip: React.FC<CoinFlipProps> = ({ onSuggestion, onClose }) => 
         setWinking(true);
         setTimeout(() => setWinking(false), 400);
       }, 200);
-    }, 2500);
+    }, 3000);
   };
 
   const handleAcceptSuggestion = () => {
@@ -192,7 +193,7 @@ export const CoinFlip: React.FC<CoinFlipProps> = ({ onSuggestion, onClose }) => 
 
       <style>{`
         .coin-wrapper {
-          perspective: 1000px;
+          perspective: 1500px;
           position: relative;
         }
 
@@ -201,49 +202,67 @@ export const CoinFlip: React.FC<CoinFlipProps> = ({ onSuggestion, onClose }) => 
           width: 210px;
           height: 210px;
           transform-style: preserve-3d;
-          transition: transform 0.6s ease-out;
+          transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        /* Feldobás animáció */
+        /* Javított feldobás animáció - sokkal simább */
         .flipping .coin {
-          animation: coinFlip 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          animation: coinFlip 3s cubic-bezier(0.25, 0.1, 0.25, 1);
         }
 
         @keyframes coinFlip {
           0% {
-            transform: translateY(0) rotateY(0deg) rotateX(0deg);
+            transform: translateY(0) translateZ(0) rotateY(0deg) rotateX(0deg);
           }
-          25% {
-            transform: translateY(-180px) rotateY(900deg) rotateX(180deg) scale(1.1);
+          15% {
+            transform: translateY(-200px) translateZ(50px) rotateY(540deg) rotateX(180deg) scale(1.15);
           }
-          50% {
-            transform: translateY(-220px) rotateY(1800deg) rotateX(360deg) scale(1.05);
+          30% {
+            transform: translateY(-280px) translateZ(80px) rotateY(1080deg) rotateX(360deg) scale(1.2);
+          }
+          45% {
+            transform: translateY(-300px) translateZ(90px) rotateY(1620deg) rotateX(540deg) scale(1.25);
+          }
+          60% {
+            transform: translateY(-280px) translateZ(80px) rotateY(2160deg) rotateX(720deg) scale(1.2);
           }
           75% {
-            transform: translateY(-180px) rotateY(2700deg) rotateX(540deg) scale(1.1);
+            transform: translateY(-200px) translateZ(50px) rotateY(2700deg) rotateX(900deg) scale(1.15);
+          }
+          90% {
+            transform: translateY(-80px) translateZ(20px) rotateY(3240deg) rotateX(1080deg) scale(1.08);
           }
           100% {
-            transform: translateY(0) rotateY(3600deg) rotateX(720deg) scale(1);
+            transform: translateY(0) translateZ(0) rotateY(3600deg) rotateX(1200deg) scale(1);
           }
         }
 
-        /* Landolás animáció */
+        /* Javított landolás animáció - simább pattogás */
         .landed .coin {
-          animation: coinBounce 0.5s ease-out;
+          animation: coinBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         @keyframes coinBounce {
           0% {
-            transform: translateY(-30px) scale(1.1);
+            transform: translateY(-40px) translateZ(10px) scale(1.15);
+          }
+          25% {
+            transform: translateY(0) translateZ(0) scale(0.95);
           }
           40% {
-            transform: translateY(8px) scale(0.95);
+            transform: translateY(-15px) translateZ(5px) scale(1.05);
           }
-          65% {
-            transform: translateY(-5px) scale(1.02);
+          60% {
+            transform: translateY(0) translateZ(0) scale(0.98);
+          }
+          75% {
+            transform: translateY(-5px) translateZ(2px) scale(1.02);
+          }
+          90% {
+            transform: translateY(0) translateZ(0) scale(0.99);
           }
           100% {
-            transform: translateY(0) scale(1);
+            transform: translateY(0) translateZ(0) scale(1);
           }
         }
 
