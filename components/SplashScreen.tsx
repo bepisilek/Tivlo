@@ -38,13 +38,14 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
   }, [onComplete]);
 
   return (
-    <div className="fixed inset-0 z-[100] bg-gradient-to-br from-rose-600 via-orange-500 to-amber-500 flex items-center justify-center overflow-hidden">
+    // MÓDOSÍTVA: Sötét feketés-narancssárgás gradiens háttér
+    <div className="fixed inset-0 z-[100] bg-gradient-to-br from-gray-950 via-neutral-900 to-orange-900 flex items-center justify-center overflow-hidden">
       
       {/* Eső órák */}
       {clocks.map((clock) => (
         <div
           key={clock.id}
-          className="absolute animate-fall opacity-60"
+          className="absolute animate-fall opacity-40"
           style={{
             left: `${clock.left}%`,
             animationDelay: `${clock.animationDelay}s`,
@@ -52,12 +53,13 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
             top: '-50px'
           }}
         >
+          {/* MÓDOSÍTVA: Halvány narancssárgás árnyalat a fehér helyett */}
           <Clock 
             size={clock.size} 
-            className="text-white/30"
+            className="text-orange-500/20"
             style={{ 
               transform: `rotate(${clock.rotation}deg)`,
-              filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))'
+              filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))'
             }}
           />
         </div>
@@ -66,26 +68,28 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
       {/* Központi logó és szöveg */}
       <div className="relative z-10 text-center animate-fade-in-scale">
         <div className="mb-6 relative">
-          {/* Háttér glow */}
-          <div className="absolute inset-0 bg-white/20 blur-3xl rounded-full scale-150"></div>
+          {/* MÓDOSÍTVA: Háttér glow narancssárgára cserélve */}
+          <div className="absolute inset-0 bg-orange-600/20 blur-3xl rounded-full scale-150"></div>
           
-          {/* Főóra */}
-          <div className="relative w-32 h-32 mx-auto bg-white/90 rounded-full flex items-center justify-center shadow-2xl border-4 border-white/50">
-            <Clock size={64} className="text-rose-600" strokeWidth={2} />
+          {/* MÓDOSÍTVA: Sötétített "üveges" hatású kör narancs kerettel */}
+          <div className="relative w-32 h-32 mx-auto bg-neutral-900/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-2xl border border-orange-500/30 ring-4 ring-orange-500/10">
+            <Clock size={64} className="text-orange-500" strokeWidth={2} />
           </div>
         </div>
 
         <h1 className="text-5xl font-black text-white mb-2 tracking-tight drop-shadow-lg">
           Tivlo
         </h1>
-        <p className="text-white/90 text-lg font-medium tracking-wide">
+        {/* MÓDOSÍTVA: Kicsit melegebb szürke szöveg */}
+        <p className="text-orange-100/80 text-lg font-medium tracking-wide">
           Ne pazarold az életed
         </p>
 
         {/* Loading indikátor */}
         <div className="mt-8 flex justify-center">
-          <div className="w-16 h-1 bg-white/30 rounded-full overflow-hidden">
-            <div className="h-full bg-white rounded-full animate-loading-bar"></div>
+          {/* MÓDOSÍTVA: Sötétebb sáv, narancs csíkkal */}
+          <div className="w-16 h-1 bg-gray-800 rounded-full overflow-hidden">
+            <div className="h-full bg-orange-500 rounded-full animate-loading-bar box-shadow-glow"></div>
           </div>
         </div>
       </div>
@@ -138,6 +142,10 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
 
         .animate-loading-bar {
           animation: loading-bar 1.5s ease-in-out infinite;
+        }
+        
+        .box-shadow-glow {
+            box-shadow: 0 0 10px #f97316;
         }
       `}</style>
     </div>
