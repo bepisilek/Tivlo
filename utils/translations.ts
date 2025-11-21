@@ -56,6 +56,20 @@ export const translations = {
     marketing_subscribe: 'Feliratkozás',
     marketing_consent_updated: 'Marketing beállításaid frissítve!',
 
+    // Delete Account
+    delete_account_title: 'Fiók és adatok törlése',
+    delete_account_desc: 'Ez a művelet véglegesen törli a fiókodat és minden adatodat. Ez a folyamat nem visszafordítható.',
+    delete_account_warning: 'Figyelem! A következők törlésre kerülnek:',
+    delete_account_list_profile: 'Profilod minden adata (fizetés, beállítások)',
+    delete_account_list_history: 'Teljes vásárlási előzményeid',
+    delete_account_list_stats: 'Statisztikáid és jelvényeid',
+    delete_account_list_auth: 'Bejelentkezési adataid (email, jelszó)',
+    delete_account_confirm_label: 'Írd be a következőt a törlés megerősítéséhez:',
+    delete_account_confirm_text: 'TÖRÖLD A FIÓKOM',
+    delete_account_button: 'Véglegesen törlöm a fiókomat',
+    delete_account_success: 'A fiókod és minden adatod sikeresen törölve lett.',
+    delete_account_error: 'Hiba történt a fiók törlésekor. Kérlek, próbáld újra később.',
+
     // Tour
     tour_welcome_title: 'Üdvözöl a Tivlo!',
     tour_welcome_desc: 'Ez egy gyors útmutató, hogy kihozd a maximumot az appból.',
@@ -94,6 +108,7 @@ export const translations = {
     menu_profile: 'Jelenlegi profil',
     menu_edit_profile: 'Profil szerkesztése',
     menu_reset_password: 'Jelszó módosítása',
+    menu_delete_account: 'Fiók törlése',
 
     // Reset Password
     reset_password_title: 'Új jelszó beállítása',
@@ -240,6 +255,20 @@ export const translations = {
     marketing_subscribe: 'Subscribe',
     marketing_consent_updated: 'Marketing settings updated!',
 
+    // Delete Account
+    delete_account_title: 'Delete Account and Data',
+    delete_account_desc: 'This action will permanently delete your account and all your data. This process cannot be undone.',
+    delete_account_warning: 'Warning! The following will be deleted:',
+    delete_account_list_profile: 'All your profile data (salary, settings)',
+    delete_account_list_history: 'Your complete purchase history',
+    delete_account_list_stats: 'Your statistics and badges',
+    delete_account_list_auth: 'Your login credentials (email, password)',
+    delete_account_confirm_label: 'Type the following to confirm deletion:',
+    delete_account_confirm_text: 'DELETE MY ACCOUNT',
+    delete_account_button: 'Permanently Delete My Account',
+    delete_account_success: 'Your account and all data have been successfully deleted.',
+    delete_account_error: 'An error occurred while deleting your account. Please try again later.',
+
     // Tour
     tour_welcome_title: 'Welcome to Tivlo!',
     tour_welcome_desc: 'Here is a quick tour to help you get the most out of the app.',
@@ -278,6 +307,7 @@ export const translations = {
     menu_profile: 'Current Profile',
     menu_edit_profile: 'Edit Profile',
     menu_reset_password: 'Change password',
+    menu_delete_account: 'Delete account',
 
     // Reset Password
     reset_password_title: 'Set new password',
