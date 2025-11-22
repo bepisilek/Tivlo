@@ -255,6 +255,22 @@ export const translations = {
     // Tour - Challenges
     tour_challenges_title: 'Kihívások',
     tour_challenges_desc: 'Játssz szórakoztató mini játékokkal és szerezz plusz pontokat!',
+
+    // Daily Quiz
+    daily_quiz_title: 'Napi Kvíz',
+    daily_quiz_subtitle: 'Válaszolj a napi kérdésre!',
+    daily_quiz_category: 'Kategória',
+    daily_quiz_correct: 'Helyes válasz!',
+    daily_quiz_wrong: 'Sajnos hibás',
+    daily_quiz_correct_answer: 'A helyes válasz',
+    daily_quiz_already_played: 'Ma már játszottál!',
+    daily_quiz_come_back: 'Gyere vissza holnap egy új kérdésért!',
+    daily_quiz_share: 'Megosztás',
+    daily_quiz_your_answer: 'A te válaszod',
+    daily_quiz_streak: 'Sorozat',
+    daily_quiz_streak_days: 'nap',
+    daily_quiz_best_streak: 'Legjobb sorozat',
+    daily_quiz_total_correct: 'Összes helyes',
   },
   en: {
     // General
@@ -510,6 +526,22 @@ export const translations = {
     // Tour - Challenges
     tour_challenges_title: 'Challenges',
     tour_challenges_desc: 'Play fun mini-games and earn extra points!',
+
+    // Daily Quiz
+    daily_quiz_title: 'Daily Quiz',
+    daily_quiz_subtitle: 'Answer the daily question!',
+    daily_quiz_category: 'Category',
+    daily_quiz_correct: 'Correct answer!',
+    daily_quiz_wrong: 'Wrong answer',
+    daily_quiz_correct_answer: 'The correct answer is',
+    daily_quiz_already_played: 'You already played today!',
+    daily_quiz_come_back: 'Come back tomorrow for a new question!',
+    daily_quiz_share: 'Share',
+    daily_quiz_your_answer: 'Your answer',
+    daily_quiz_streak: 'Streak',
+    daily_quiz_streak_days: 'days',
+    daily_quiz_best_streak: 'Best streak',
+    daily_quiz_total_correct: 'Total correct',
   },
   de: {
     // General
@@ -765,5 +797,21 @@ export const translations = {
     // Tour - Challenges
     tour_challenges_title: 'Herausforderungen',
     tour_challenges_desc: 'Spiele unterhaltsame Minispiele und sammle Extrapunkte!',
+
+    // Daily Quiz
+    daily_quiz_title: 'Tägliches Quiz',
+    daily_quiz_subtitle: 'Beantworte die tägliche Frage!',
+    daily_quiz_category: 'Kategorie',
+    daily_quiz_correct: 'Richtige Antwort!',
+    daily_quiz_wrong: 'Falsche Antwort',
+    daily_quiz_correct_answer: 'Die richtige Antwort ist',
+    daily_quiz_already_played: 'Du hast heute schon gespielt!',
+    daily_quiz_come_back: 'Komm morgen für eine neue Frage wieder!',
+    daily_quiz_share: 'Teilen',
+    daily_quiz_your_answer: 'Deine Antwort',
+    daily_quiz_streak: 'Serie',
+    daily_quiz_streak_days: 'Tage',
+    daily_quiz_best_streak: 'Beste Serie',
+    daily_quiz_total_correct: 'Gesamt richtig',
   }
 };
