@@ -1,68 +1,32 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
-import { ArrowLeft, Delete, CornerDownLeft, RefreshCw, Share2 } from 'lucide-react';
+import { ArrowLeft, Delete, CornerDownLeft, Share2 } from 'lucide-react';
 import { Button } from './Button';
 
 interface WordleGameProps {
   onBack: () => void;
 }
 
-// Word lists for each language (5-letter words)
-const WORD_LISTS: Record<string, string[]> = {
-  hu: [
-    'ablak', 'alma', 'babos', 'barna', 'cukor', 'dalom', 'egyes', 'fajta', 'galya', 'halas',
-    'ifjak', 'jakab', 'kalap', 'lakat', 'magas', 'napos', 'olvas', 'patak', 'ravak', 'savas',
-    'talaj', 'ugrat', 'vacak', 'zabos', 'bajok', 'cukos', 'darab', 'egyed', 'falak', 'garat',
-    'hamar', 'ingek', 'javas', 'kamat', 'lapos', 'marad', 'napok', 'oktat', 'palya', 'rakat',
-    'salak', 'takar', 'utcak', 'vagya', 'zajos', 'balos', 'csata', 'dolog', 'ember', 'farok',
-    'gamma', 'halad', 'inger', 'jatek', 'kavar', 'lapok', 'marka', 'nemas', 'orias', 'paros',
-    'ramas', 'sarga', 'talal', 'udvar', 'varos', 'zavar', 'balra', 'csiga', 'donna', 'enyhe',
-    'favag', 'gamba', 'halmo', 'inter', 'japan', 'kazal', 'labak', 'madal', 'nella', 'orosz',
-    'pazar', 'rajta', 'sator', 'tanul', 'ujabb', 'varga', 'zebra', 'banda', 'csepp', 'draga'
-  ],
-  en: [
-    'about', 'above', 'abuse', 'actor', 'acute', 'admit', 'adopt', 'adult', 'after', 'again',
-    'agent', 'agree', 'ahead', 'alarm', 'album', 'alert', 'alike', 'alive', 'allow', 'alone',
-    'along', 'alter', 'among', 'angry', 'apart', 'apple', 'apply', 'arena', 'argue', 'arise',
-    'array', 'aside', 'asset', 'avoid', 'award', 'aware', 'badly', 'baker', 'bases', 'basic',
-    'basis', 'beach', 'began', 'begin', 'begun', 'being', 'below', 'bench', 'billy', 'birth',
-    'black', 'blame', 'blind', 'block', 'blood', 'board', 'boost', 'bound', 'brain', 'brand',
-    'bread', 'break', 'breed', 'brief', 'bring', 'broad', 'broke', 'brown', 'build', 'built',
-    'buyer', 'cable', 'calif', 'carry', 'catch', 'cause', 'chain', 'chair', 'chart', 'chase',
-    'cheap', 'check', 'chest', 'chief', 'child', 'china', 'chose', 'civil', 'claim', 'class',
-    'clean', 'clear', 'click', 'climb', 'clock', 'close', 'coach', 'coast', 'could', 'count'
-  ],
-  de: [
-    'abend', 'alles', 'alter', 'damit', 'daran', 'dabei', 'davon', 'davor', 'denen', 'deren',
-    'derer', 'diese', 'dinge', 'durch', 'eben', 'ebene', 'einem', 'einen', 'einer', 'eines',
-    'erste', 'etwa', 'fahrt', 'falle', 'falls', 'faser', 'fehlt', 'fest', 'finde', 'firma',
-    'folge', 'frage', 'fragt', 'freie', 'fremd', 'freut', 'ganze', 'geben', 'gegen', 'geher',
-    'geist', 'genau', 'gerne', 'gibt', 'glass', 'glaubt', 'gross', 'grund', 'gruss', 'haben',
-    'haelt', 'halbe', 'hallo', 'halte', 'handy', 'haupt', 'heute', 'hilfe', 'hinzu', 'holen',
-    'jahre', 'jeden', 'jeder', 'jedes', 'jetzt', 'kampf', 'karte', 'kasse', 'kaufe', 'keine',
-    'kennt', 'kinder', 'kiste', 'klare', 'klein', 'komme', 'kraft', 'kreis', 'kurze', 'lager',
-    'lande', 'lange', 'lasse', 'lauft', 'legen', 'lehre', 'leide', 'lesen', 'letzt', 'leute',
-    'liebe', 'liegt', 'liste', 'macht', 'maler', 'manche', 'markt', 'masse', 'meist', 'menge'
-  ]
+// English keyboard layout (used for all languages)
+const KEYBOARD_LAYOUT = [
+  ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
+  ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
+  ['ENTER', 'z', 'x', 'c', 'v', 'b', 'n', 'm', 'BACK']
+];
+
+// Get daily word based on day of year (deterministic)
+const getDailyWordIndex = (wordListLength: number): number => {
+  const today = new Date();
+  const startOfYear = new Date(today.getFullYear(), 0, 0);
+  const diff = today.getTime() - startOfYear.getTime();
+  const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
+  return dayOfYear % wordListLength;
 };
 
-// Keyboard layouts for each language
-const KEYBOARD_LAYOUTS: Record<string, string[][]> = {
-  hu: [
-    ['q', 'w', 'e', 'r', 't', 'z', 'u', 'i', 'o', 'p'],
-    ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
-    ['ENTER', 'y', 'x', 'c', 'v', 'b', 'n', 'm', 'BACK']
-  ],
-  en: [
-    ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
-    ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
-    ['ENTER', 'z', 'x', 'c', 'v', 'b', 'n', 'm', 'BACK']
-  ],
-  de: [
-    ['q', 'w', 'e', 'r', 't', 'z', 'u', 'i', 'o', 'p'],
-    ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
-    ['ENTER', 'y', 'x', 'c', 'v', 'b', 'n', 'm', 'BACK']
-  ]
+// Get today's date string for localStorage key
+const getTodayKey = (): string => {
+  const today = new Date();
+  return `wordle_${today.getFullYear()}_${today.getMonth()}_${today.getDate()}`;
 };
 
 type LetterStatus = 'correct' | 'present' | 'absent' | 'empty';
@@ -71,6 +35,12 @@ interface GameState {
   targetWord: string;
   guesses: string[];
   currentGuess: string;
+  gameStatus: 'playing' | 'won' | 'lost' | 'already_played';
+  letterStatuses: Record<string, LetterStatus>;
+}
+
+interface SavedGameState {
+  guesses: string[];
   gameStatus: 'playing' | 'won' | 'lost';
   letterStatuses: Record<string, LetterStatus>;
 }
@@ -79,41 +49,95 @@ const WORD_LENGTH = 5;
 const MAX_GUESSES = 6;
 
 export const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
 
-  const getRandomWord = useCallback(() => {
-    const words = WORD_LISTS[language] || WORD_LISTS.en;
-    return words[Math.floor(Math.random() * words.length)].toLowerCase();
-  }, [language]);
+  const [wordList, setWordList] = useState<string[]>([]);
+  const [wordSet, setWordSet] = useState<Set<string>>(new Set());
+  const [isLoading, setIsLoading] = useState(true);
+  const [invalidWord, setInvalidWord] = useState(false);
 
-  const [gameState, setGameState] = useState<GameState>(() => ({
-    targetWord: getRandomWord(),
+  const [gameState, setGameState] = useState<GameState>({
+    targetWord: '',
     guesses: [],
     currentGuess: '',
     gameStatus: 'playing',
     letterStatuses: {}
-  }));
+  });
 
   const [shakeRow, setShakeRow] = useState(false);
   const [revealRow, setRevealRow] = useState<number | null>(null);
 
-  const keyboard = KEYBOARD_LAYOUTS[language] || KEYBOARD_LAYOUTS.en;
-
-  const resetGame = useCallback(() => {
-    setGameState({
-      targetWord: getRandomWord(),
-      guesses: [],
-      currentGuess: '',
-      gameStatus: 'playing',
-      letterStatuses: {}
-    });
-    setRevealRow(null);
-  }, [getRandomWord]);
-
-  // Reset game when language changes
+  // Load word list on mount
   useEffect(() => {
-    resetGame();
-  }, [language, resetGame]);
+    const loadWordList = async () => {
+      try {
+        const response = await fetch('/wordsenlist.json');
+        const words: string[] = await response.json();
+        const lowercaseWords = words.map(w => w.toLowerCase());
+        setWordList(lowercaseWords);
+        setWordSet(new Set(lowercaseWords));
+
+        // Get daily word
+        const dailyIndex = getDailyWordIndex(lowercaseWords.length);
+        const dailyWord = lowercaseWords[dailyIndex];
+
+        // Check if already played today
+        const todayKey = getTodayKey();
+        const savedState = localStorage.getItem(todayKey);
+
+        if (savedState) {
+          const parsed: SavedGameState = JSON.parse(savedState);
+          if (parsed.gameStatus === 'won' || parsed.gameStatus === 'lost') {
+            setGameState({
+              targetWord: dailyWord,
+              guesses: parsed.guesses,
+              currentGuess: '',
+              gameStatus: 'already_played',
+              letterStatuses: parsed.letterStatuses
+            });
+          } else {
+            setGameState({
+              targetWord: dailyWord,
+              guesses: parsed.guesses,
+              currentGuess: '',
+              gameStatus: 'playing',
+              letterStatuses: parsed.letterStatuses
+            });
+          }
+        } else {
+          setGameState({
+            targetWord: dailyWord,
+            guesses: [],
+            currentGuess: '',
+            gameStatus: 'playing',
+            letterStatuses: {}
+          });
+        }
+
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Failed to load word list:', error);
+        setIsLoading(false);
+      }
+    };
+
+    loadWordList();
+  }, []);
+
+  // Save game state when it changes
+  useEffect(() => {
+    if (!isLoading && gameState.targetWord) {
+      const todayKey = getTodayKey();
+      const stateToSave: SavedGameState = {
+        guesses: gameState.guesses,
+        gameStatus: gameState.gameStatus === 'already_played'
+          ? (gameState.guesses[gameState.guesses.length - 1] === gameState.targetWord ? 'won' : 'lost')
+          : gameState.gameStatus as 'playing' | 'won' | 'lost',
+        letterStatuses: gameState.letterStatuses
+      };
+      localStorage.setItem(todayKey, JSON.stringify(stateToSave));
+    }
+  }, [gameState, isLoading]);
 
   const getLetterStatus = (letter: string, index: number, word: string, target: string): LetterStatus => {
     if (target[index] === letter) return 'correct';
@@ -136,6 +160,18 @@ export const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
     }
 
     const guess = gameState.currentGuess.toLowerCase();
+
+    // Validate that the word is in the list
+    if (!wordSet.has(guess)) {
+      setShakeRow(true);
+      setInvalidWord(true);
+      setTimeout(() => {
+        setShakeRow(false);
+        setInvalidWord(false);
+      }, 1500);
+      return;
+    }
+
     const newGuesses = [...gameState.guesses, guess];
     const newLetterStatuses = { ...gameState.letterStatuses };
 
@@ -167,7 +203,7 @@ export const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
       });
       setRevealRow(null);
     }, WORD_LENGTH * 300);
-  }, [gameState]);
+  }, [gameState, wordSet]);
 
   const handleKeyPress = useCallback((key: string) => {
     if (gameState.gameStatus !== 'playing') return;
@@ -287,6 +323,14 @@ export const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
     return rows;
   };
 
+  if (isLoading) {
+    return (
+      <div className="h-full flex flex-col w-full bg-slate-50 dark:bg-slate-950 items-center justify-center">
+        <p className="text-slate-600 dark:text-slate-400">{t('loading')}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="h-full flex flex-col w-full bg-slate-50 dark:bg-slate-950">
       {/* Header */}
@@ -301,14 +345,14 @@ export const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
           <h2 className="text-lg font-bold text-slate-900 dark:text-white">{t('wordle_title')}</h2>
           <p className="text-xs text-slate-500 dark:text-slate-400">{t('wordle_subtitle')}</p>
         </div>
-        <button
-          onClick={resetGame}
-          className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-          title={t('wordle_new_game')}
-        >
-          <RefreshCw size={20} className="text-slate-600 dark:text-slate-400" />
-        </button>
       </div>
+
+      {/* Invalid word notification */}
+      {invalidWord && (
+        <div className="absolute top-20 left-1/2 transform -translate-x-1/2 bg-slate-800 dark:bg-slate-700 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-fade-in">
+          {t('wordle_invalid_word')}
+        </div>
+      )}
 
       {/* Game Grid */}
       <div className="flex-1 flex flex-col items-center justify-center p-4 gap-1.5">
@@ -316,7 +360,7 @@ export const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
       </div>
 
       {/* Game Over Modal */}
-      {gameState.gameStatus !== 'playing' && (
+      {(gameState.gameStatus === 'won' || gameState.gameStatus === 'lost') && (
         <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
           <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 max-w-xs w-full shadow-xl border border-slate-200 dark:border-slate-700 text-center">
             <h3 className={`text-2xl font-bold mb-2 ${gameState.gameStatus === 'won' ? 'text-emerald-500' : 'text-rose-500'}`}>
@@ -335,23 +379,38 @@ export const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
               </p>
             )}
 
-            <div className="flex gap-2">
-              <Button onClick={shareResult} variant="secondary" fullWidth>
-                <Share2 size={16} className="mr-1" />
-                {t('wordle_share')}
-              </Button>
-              <Button onClick={resetGame} fullWidth>
-                <RefreshCw size={16} className="mr-1" />
-                {t('wordle_play_again')}
-              </Button>
-            </div>
+            <Button onClick={shareResult} variant="secondary" fullWidth>
+              <Share2 size={16} className="mr-1" />
+              {t('wordle_share')}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Already Played Modal */}
+      {gameState.gameStatus === 'already_played' && (
+        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 max-w-xs w-full shadow-xl border border-slate-200 dark:border-slate-700 text-center">
+            <h3 className="text-xl font-bold mb-2 text-slate-900 dark:text-white">
+              {t('wordle_already_played')}
+            </h3>
+            <p className="text-slate-600 dark:text-slate-300 mb-2">
+              {t('wordle_come_back')}
+            </p>
+            <p className="text-slate-600 dark:text-slate-300 mb-4">
+              {t('wordle_answer')}: <span className="font-bold uppercase">{gameState.targetWord}</span>
+            </p>
+            <Button onClick={shareResult} variant="secondary" fullWidth>
+              <Share2 size={16} className="mr-1" />
+              {t('wordle_share')}
+            </Button>
           </div>
         </div>
       )}
 
       {/* Keyboard */}
       <div className="p-2 pb-24 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
-        {keyboard.map((row, rowIndex) => (
+        {KEYBOARD_LAYOUT.map((row, rowIndex) => (
           <div key={rowIndex} className="flex justify-center gap-1 mb-1">
             {row.map((key) => (
               <button
