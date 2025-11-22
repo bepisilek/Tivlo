@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, User, Moon, Sun, LogOut, KeyRound, Trash2, Globe, Settings, ChevronDown, ChevronUp, MessageCircle } from 'lucide-react';
+import { X, User, Moon, Sun, LogOut, KeyRound, Trash2, Globe, Settings, ChevronDown, ChevronUp, MessageCircle, HelpCircle } from 'lucide-react';
 import { UserSettings } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 import { isSupabaseConfigured, supabase, SUPABASE_CONFIG_MESSAGE } from '../lib/supabaseClient';
@@ -29,6 +29,7 @@ interface SidebarProps {
   onOpenProfile: () => void;
   onOpenResetPassword: () => void;
   onOpenDeleteAccount: () => void;
+  onOpenHelp: () => void;
   settings: UserSettings;
   toggleTheme: () => void;
 }
@@ -39,6 +40,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onOpenProfile,
   onOpenResetPassword,
   onOpenDeleteAccount,
+  onOpenHelp,
   settings,
   toggleTheme
 }) => {
@@ -173,8 +175,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
             )}
           </div>
 
-          {/* Support Button */}
+          {/* Help Button */}
           <div className="border-t border-slate-200 dark:border-slate-800 pt-2 mt-2">
+            <button
+              onClick={() => { onOpenHelp(); onClose(); }}
+              className="w-full flex items-center gap-3 p-3 text-slate-700 dark:text-slate-300 hover:bg-orange-50 dark:hover:bg-orange-900/20 hover:text-orange-600 dark:hover:text-orange-400 rounded-xl transition-colors"
+            >
+              <HelpCircle size={20} />
+              <span className="font-medium text-sm">{t('menu_help')}</span>
+            </button>
+          </div>
+
+          {/* Support Button */}
+          <div className="pt-1">
             <button
               onClick={() => { /* Link will be added later */ }}
               className="w-full flex items-center gap-3 p-3 text-slate-700 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 rounded-xl transition-colors"

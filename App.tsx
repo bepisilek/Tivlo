@@ -320,6 +320,11 @@ const App: React.FC = () => {
       setViewState(ViewState.WELCOME);
   };
 
+  const handleOpenHelp = () => {
+      setViewState(ViewState.CALCULATOR);
+      setShowTour(true);
+  };
+
   const handleMenuClick = () => {
     setIsSidebarOpen(true);
   };
@@ -393,6 +398,7 @@ const App: React.FC = () => {
                         onOpenProfile={handleOpenProfile}
                         onOpenResetPassword={handleOpenResetPassword}
                         onOpenDeleteAccount={handleOpenDeleteAccount}
+                        onOpenHelp={handleOpenHelp}
                         settings={settings}
                         toggleTheme={toggleTheme}
                     />
@@ -453,7 +459,7 @@ const App: React.FC = () => {
                                 )}
                             </div>
 
-                            <Navigation currentView={viewState} onNavigate={setViewState} />
+                            <Navigation currentView={viewState} onNavigate={setViewState} isHighlighted={showTour} />
                         </div>
                     )}
                 </>

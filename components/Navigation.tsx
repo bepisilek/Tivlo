@@ -6,11 +6,12 @@ import { useLanguage } from '../contexts/LanguageContext';
 interface NavigationProps {
   currentView: ViewState;
   onNavigate: (view: ViewState) => void;
+  isHighlighted?: boolean;
 }
 
-export const Navigation: React.FC<NavigationProps> = ({ currentView, onNavigate }) => {
+export const Navigation: React.FC<NavigationProps> = ({ currentView, onNavigate, isHighlighted = false }) => {
   const { t } = useLanguage();
-  
+
   const navItems = [
     { id: ViewState.CALCULATOR, icon: Calculator, label: t('nav_calculator') },
     { id: ViewState.HISTORY, icon: History, label: t('nav_history') },
@@ -19,7 +20,7 @@ export const Navigation: React.FC<NavigationProps> = ({ currentView, onNavigate 
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 pb-safe px-4 py-3 flex justify-between items-center z-40 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+    <div className={`fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 pb-safe px-4 py-3 flex justify-between items-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] ${isHighlighted ? 'z-[110]' : 'z-40'}`}>
       {navItems.map((item) => {
         const Icon = item.icon;
         const isActive = currentView === item.id;
@@ -28,15 +29,15 @@ export const Navigation: React.FC<NavigationProps> = ({ currentView, onNavigate 
             key={item.id}
             onClick={() => onNavigate(item.id)}
             className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-200 flex-1 ${
-              isActive 
-                ? 'text-blue-600 dark:text-blue-400 font-semibold' 
+              isActive
+                ? 'text-orange-500 dark:text-orange-400 font-semibold bg-orange-500/10 dark:bg-orange-400/10 ring-1 ring-orange-500/30 dark:ring-orange-400/30'
                 : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
             }`}
           >
-            <Icon 
-                size={24} 
-                strokeWidth={isActive ? 2.5 : 2} 
-                className={`transition-transform duration-200 ${isActive ? 'scale-110' : ''}`}
+            <Icon
+                size={24}
+                strokeWidth={isActive ? 2.5 : 2}
+                className={`transition-transform duration-200 ${isActive ? 'scale-110 drop-shadow-[0_0_8px_rgba(251,146,60,0.6)]' : ''}`}
             />
             <span className="text-[10px] tracking-wide">{item.label}</span>
           </button>

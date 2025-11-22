@@ -65,13 +65,16 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ onComplete }) =>
         <X size={24} />
       </button>
 
-      {/* Highlight Spot (Only for nav items) */}
+      {/* Highlight Spot (Only for nav items) - transparent cutout so icons are visible */}
       {currentStep.highlight && (
-         <div 
-            className="absolute bottom-0 h-[80px] w-[25%] bg-white/10 border-t-2 border-blue-500 transition-all duration-300"
+         <div
+            className="absolute bottom-0 h-[80px] w-[25%] border-t-2 border-orange-500 transition-all duration-300 pointer-events-none"
             style={{ left: currentStep.highlight }}
          >
-            <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-blue-500 rotate-45"></div>
+            {/* Arrow indicator pointing down to the nav item */}
+            <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-orange-500 rotate-45 shadow-lg"></div>
+            {/* Glow effect around the highlighted area */}
+            <div className="absolute inset-0 ring-2 ring-orange-500/50 ring-inset rounded-t-xl"></div>
          </div>
       )}
 
