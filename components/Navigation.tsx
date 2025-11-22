@@ -7,9 +7,10 @@ interface NavigationProps {
   currentView: ViewState;
   onNavigate: (view: ViewState) => void;
   isHighlighted?: boolean;
+  highlightedView?: ViewState | null;
 }
 
-export const Navigation: React.FC<NavigationProps> = ({ currentView, onNavigate, isHighlighted = false }) => {
+export const Navigation: React.FC<NavigationProps> = ({ currentView, onNavigate, isHighlighted = false, highlightedView }) => {
   const { t } = useLanguage();
 
   const navItems = [
@@ -23,7 +24,7 @@ export const Navigation: React.FC<NavigationProps> = ({ currentView, onNavigate,
     <div className={`fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 pb-safe px-4 py-3 flex justify-between items-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] ${isHighlighted ? 'z-[110]' : 'z-40'}`}>
       {navItems.map((item) => {
         const Icon = item.icon;
-        const isActive = currentView === item.id;
+        const isActive = (highlightedView ?? currentView) === item.id;
         return (
           <button
             key={item.id}

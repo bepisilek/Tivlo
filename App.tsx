@@ -40,7 +40,20 @@ const App: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [previousView, setPreviousView] = useState<ViewState>(ViewState.CALCULATOR);
   const [showTour, setShowTour] = useState(false);
+  const [tourStep, setTourStep] = useState(0);
   const [session, setSession] = useState<any>(null);
+
+  // Map tour step to ViewState for navigation highlight
+  const getTourHighlightedView = (): ViewState | null => {
+    if (!showTour) return null;
+    switch (tourStep) {
+      case 1: return ViewState.CALCULATOR;
+      case 2: return ViewState.HISTORY;
+      case 3: return ViewState.STATISTICS;
+      case 4: return ViewState.LEVELS;
+      default: return null;
+    }
+  };
 
   // Splash Screen Logic
   useEffect(() => {
@@ -234,6 +247,7 @@ const App: React.FC = () => {
 
   const handleTourComplete = () => {
       setShowTour(false);
+      setTourStep(0);
       localStorage.setItem(TOUR_KEY, 'true');
   };
 
@@ -322,6 +336,7 @@ const App: React.FC = () => {
 
   const handleOpenHelp = () => {
       setViewState(ViewState.CALCULATOR);
+      setTourStep(0);
       setShowTour(true);
   };
 
@@ -389,7 +404,7 @@ const App: React.FC = () => {
             ) : (
                 <>
                     {showTour && viewState === ViewState.CALCULATOR && (
-                        <OnboardingTour onComplete={handleTourComplete} />
+                        <OnboardingTour onComplete={handleTourComplete} onStepChange={setTourStep} />
                     )}
 
                     <Sidebar
@@ -459,7 +474,7 @@ const App: React.FC = () => {
                                 )}
                             </div>
 
-                            <Navigation currentView={viewState} onNavigate={setViewState} isHighlighted={showTour} />
+                            <Navigation currentView={viewState} onNavigate={setViewState} isHighlighted={showTour} highlightedView={getTourHighlightedView()} />
                         </div>
                     )}
                 </>
