@@ -5,6 +5,7 @@ import { ShoppingBag, Play, Check, X, Sparkles, Briefcase, Coins } from 'lucide-
 import { useLanguage } from '../contexts/LanguageContext';
 import { getAdviceMessage } from '../utils/adviceMessages';
 import { CoinFlip } from './CoinFlip';
+import { BannerCarousel } from './BannerCarousel';
 
 interface CalculatorProps {
   settings: UserSettings;
@@ -164,6 +165,9 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
       <div className="px-4 py-2 text-center border-b border-slate-100 dark:border-slate-800/50 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm shrink-0">
          <p className="text-xs md:text-sm text-slate-500">{t('hourly_rate')}: <span className="font-mono font-bold text-slate-700 dark:text-slate-300">{hourlyRate.toFixed(0)} {settings.currency}</span></p>
       </div>
+
+      {/* Banner Carousel */}
+      <BannerCarousel />
 
       <main className="flex-1 px-4 md:px-6 overflow-y-auto no-scrollbar py-4 pb-20 max-w-md mx-auto w-full">
         
