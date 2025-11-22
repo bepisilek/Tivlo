@@ -43,6 +43,11 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // SECURITY: Never cache Supabase API responses - they contain sensitive user data
+  if (url.hostname.includes('supabase')) {
+    return;
+  }
+
   const isNavigationRequest = event.request.mode === 'navigate';
 
   event.respondWith(

@@ -6,7 +6,8 @@ export default defineConfig(() => {
     return {
       server: {
         port: 3000,
-        host: '0.0.0.0',
+        // SECURITY: Use localhost instead of 0.0.0.0 to avoid exposing dev server to network
+        host: 'localhost',
       },
       plugins: [react()],
       publicDir: 'public',
