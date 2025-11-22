@@ -73,6 +73,88 @@ body {
   }
 }
 
+/* Flame animations */
+@keyframes flame-subtle {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    filter: brightness(1);
+  }
+  25% {
+    transform: scale(1.02) rotate(-1deg);
+    filter: brightness(1.05);
+  }
+  50% {
+    transform: scale(1.04) rotate(1deg);
+    filter: brightness(1.1);
+  }
+  75% {
+    transform: scale(1.02) rotate(-0.5deg);
+    filter: brightness(1.05);
+  }
+}
+
+@keyframes flame-medium {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    filter: brightness(1) drop-shadow(0 0 2px currentColor);
+  }
+  20% {
+    transform: scale(1.05) rotate(-2deg);
+    filter: brightness(1.1) drop-shadow(0 0 4px currentColor);
+  }
+  40% {
+    transform: scale(1.08) rotate(2deg);
+    filter: brightness(1.15) drop-shadow(0 0 6px currentColor);
+  }
+  60% {
+    transform: scale(1.05) rotate(-1deg);
+    filter: brightness(1.1) drop-shadow(0 0 4px currentColor);
+  }
+  80% {
+    transform: scale(1.03) rotate(1deg);
+    filter: brightness(1.05) drop-shadow(0 0 3px currentColor);
+  }
+}
+
+@keyframes flame-intense {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    filter: brightness(1) drop-shadow(0 0 4px currentColor);
+  }
+  15% {
+    transform: scale(1.08) rotate(-3deg);
+    filter: brightness(1.15) drop-shadow(0 0 8px currentColor);
+  }
+  30% {
+    transform: scale(1.12) rotate(3deg);
+    filter: brightness(1.2) drop-shadow(0 0 12px currentColor);
+  }
+  45% {
+    transform: scale(1.06) rotate(-2deg);
+    filter: brightness(1.1) drop-shadow(0 0 6px currentColor);
+  }
+  60% {
+    transform: scale(1.1) rotate(2deg);
+    filter: brightness(1.18) drop-shadow(0 0 10px currentColor);
+  }
+  75% {
+    transform: scale(1.04) rotate(-1deg);
+    filter: brightness(1.08) drop-shadow(0 0 5px currentColor);
+  }
+}
+
+.animate-flame-subtle {
+  animation: flame-subtle 2s ease-in-out infinite;
+}
+
+.animate-flame-medium {
+  animation: flame-medium 1.5s ease-in-out infinite;
+}
+
+.animate-flame-intense {
+  animation: flame-intense 1s ease-in-out infinite;
+}
+
 /* Touch optimizations */
 button,
 input,
