@@ -271,6 +271,21 @@ export const translations = {
     daily_quiz_streak_days: 'nap',
     daily_quiz_best_streak: 'Legjobb sorozat',
     daily_quiz_total_correct: 'Összes helyes',
+
+    // Memory Game
+    memory_title: 'Cica Memória',
+    memory_subtitle: 'Párosítsd össze a cicákat!',
+    memory_streak: 'Sorozat',
+    memory_best_streak: 'Legjobb',
+    memory_games_won: 'Győzelmek',
+    memory_daily_challenge: 'Napi kihívás',
+    memory_moves: 'lépés',
+    memory_time: 'Idő',
+    memory_won: 'Gratulálok! 🎉',
+    memory_already_played: 'Ma már játszottál!',
+    memory_come_back: 'Gyere vissza holnap egy új kihívásért!',
+    memory_share: 'Megosztás',
+    memory_new_game: 'Új játék',
   },
   en: {
     // General
@@ -542,6 +557,21 @@ export const translations = {
     daily_quiz_streak_days: 'days',
     daily_quiz_best_streak: 'Best streak',
     daily_quiz_total_correct: 'Total correct',
+
+    // Memory Game
+    memory_title: 'Cat Memory',
+    memory_subtitle: 'Match the cat pairs!',
+    memory_streak: 'Streak',
+    memory_best_streak: 'Best',
+    memory_games_won: 'Games Won',
+    memory_daily_challenge: 'Daily challenge',
+    memory_moves: 'moves',
+    memory_time: 'Time',
+    memory_won: 'Well done! 🎉',
+    memory_already_played: 'Already played today!',
+    memory_come_back: 'Come back tomorrow for a new challenge!',
+    memory_share: 'Share',
+    memory_new_game: 'New game',
   },
   de: {
     // General
@@ -813,5 +843,20 @@ export const translations = {
     daily_quiz_streak_days: 'Tage',
     daily_quiz_best_streak: 'Beste Serie',
     daily_quiz_total_correct: 'Gesamt richtig',
+
+    // Memory Game
+    memory_title: 'Katzen-Memory',
+    memory_subtitle: 'Finde die Katzen-Paare!',
+    memory_streak: 'Serie',
+    memory_best_streak: 'Beste',
+    memory_games_won: 'Gewonnen',
+    memory_daily_challenge: 'Tägliche Herausforderung',
+    memory_moves: 'Züge',
+    memory_time: 'Zeit',
+    memory_won: 'Gut gemacht! 🎉',
+    memory_already_played: 'Heute schon gespielt!',
+    memory_come_back: 'Komm morgen für eine neue Herausforderung wieder!',
+    memory_share: 'Teilen',
+    memory_new_game: 'Neues Spiel',
   }
 };
