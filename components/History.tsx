@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { HistoryItem } from '../types';
 import { Trash2, TrendingUp, TrendingDown, ShoppingBag, Pencil, X, Check } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Button } from './Button';
+import { getPriceReference, Language } from '../utils/priceReferences';
 
 interface EditModalState {
   isOpen: boolean;
@@ -19,7 +20,7 @@ interface HistoryProps {
 }
 
 export const History: React.FC<HistoryProps> = ({ items, onClearHistory, onEditItem }) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [editModal, setEditModal] = useState<EditModalState>({
     isOpen: false,
     item: null,
@@ -61,13 +62,21 @@ export const History: React.FC<HistoryProps> = ({ items, onClearHistory, onEditI
     handleCloseEdit();
   };
 
-  const totalSavedHours = items
-    .filter(i => i.decision === 'saved')
-    .reduce((acc, curr) => acc + curr.totalHoursDecimal, 0);
+  // Statistics calculations
+  const stats = useMemo(() => {
+    const saved = items.filter(i => i.decision === 'saved');
+    const bought = items.filter(i => i.decision === 'bought');
 
-  const totalSpentHours = items
-    .filter(i => i.decision === 'bought')
-    .reduce((acc, curr) => acc + curr.totalHoursDecimal, 0);
+    const savedHours = saved.reduce((acc, curr) => acc + curr.totalHoursDecimal, 0);
+    const spentHours = bought.reduce((acc, curr) => acc + curr.totalHoursDecimal, 0);
+
+    const savedMoney = saved.reduce((acc, curr) => acc + curr.price, 0);
+    const spentMoney = bought.reduce((acc, curr) => acc + curr.price, 0);
+
+    return { savedHours, spentHours, savedMoney, spentMoney };
+  }, [items]);
+
+  const currency = items.length > 0 ? items[0].currency : 'HUF';
 
   if (items.length === 0) {
     return (
@@ -165,26 +174,48 @@ export const History: React.FC<HistoryProps> = ({ items, onClearHistory, onEditI
 
       <div className="p-3 md:p-4 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm sticky top-0 z-10 border-b border-slate-100 dark:border-slate-800 shrink-0">
 
-        <div className="grid grid-cols-2 gap-2 md:gap-4 mb-2">
-            <div className="bg-emerald-50 dark:bg-emerald-600/10 p-3 md:p-4 rounded-xl md:rounded-2xl border border-emerald-100 dark:border-emerald-500/20">
+        {/* Statistics Cards */}
+        <div className="grid grid-cols-2 gap-2 md:gap-3 mb-3">
+            {/* Saved Time Card */}
+            <div className="bg-emerald-50 dark:bg-emerald-600/10 border border-emerald-200 dark:border-emerald-500/20 rounded-xl p-3 md:p-4">
                 <div className="flex items-center gap-1.5 md:gap-2 text-emerald-600 dark:text-emerald-400 mb-0.5 md:mb-1">
                     <TrendingUp size={12} className="md:hidden" />
-                    <TrendingUp size={16} className="hidden md:block" />
-                    <span className="text-[10px] md:text-xs font-bold uppercase">{t('saved_stat')}</span>
+                    <TrendingUp size={14} className="hidden md:block" />
+                    <span className="text-[10px] md:text-xs font-bold uppercase">{t('stats_saved_time')}</span>
                 </div>
-                <div className="text-xl md:text-2xl font-black text-slate-900 dark:text-white">
-                    {Math.floor(totalSavedHours)}<span className="text-xs md:text-sm font-medium text-slate-500 ml-0.5 md:ml-1">{t('hour_short')}</span>
+                <div className="text-lg md:text-xl font-black text-slate-900 dark:text-white mb-0.5">
+                    {stats.savedHours.toFixed(1)} <span className="text-xs md:text-sm font-medium text-slate-500">{t('hour_short')}</span>
                 </div>
+                <div className="text-[10px] md:text-xs text-emerald-600 dark:text-emerald-400 font-mono font-medium">
+                    + {stats.savedMoney.toLocaleString()} {currency}
+                </div>
+                {stats.savedMoney > 0 && getPriceReference(stats.savedMoney, language as Language) && (
+                    <div className="mt-2 pt-2 border-t border-emerald-200 dark:border-emerald-500/20 text-[10px] md:text-xs text-emerald-700 dark:text-emerald-300 font-medium">
+                        {language === 'hu' ? '≈ ' : language === 'de' ? '≈ ' : '≈ '}
+                        {getPriceReference(stats.savedMoney, language as Language)}
+                    </div>
+                )}
             </div>
-            <div className="bg-rose-50 dark:bg-rose-500/10 p-3 md:p-4 rounded-xl md:rounded-2xl border border-rose-100 dark:border-rose-500/20">
-                 <div className="flex items-center gap-1.5 md:gap-2 text-rose-600 dark:text-rose-400 mb-0.5 md:mb-1">
+
+            {/* Spent Time Card */}
+            <div className="bg-rose-50 dark:bg-rose-600/10 border border-rose-200 dark:border-rose-500/20 rounded-xl p-3 md:p-4">
+                <div className="flex items-center gap-1.5 md:gap-2 text-rose-600 dark:text-rose-400 mb-0.5 md:mb-1">
                     <TrendingDown size={12} className="md:hidden" />
-                    <TrendingDown size={16} className="hidden md:block" />
-                    <span className="text-[10px] md:text-xs font-bold uppercase">{t('spent_stat')}</span>
+                    <TrendingDown size={14} className="hidden md:block" />
+                    <span className="text-[10px] md:text-xs font-bold uppercase">{t('stats_spent_time')}</span>
                 </div>
-                <div className="text-xl md:text-2xl font-black text-slate-900 dark:text-white">
-                    {Math.floor(totalSpentHours)}<span className="text-xs md:text-sm font-medium text-slate-500 ml-0.5 md:ml-1">{t('hour_short')}</span>
+                <div className="text-lg md:text-xl font-black text-slate-900 dark:text-white mb-0.5">
+                    {stats.spentHours.toFixed(1)} <span className="text-xs md:text-sm font-medium text-slate-500">{t('hour_short')}</span>
                 </div>
+                <div className="text-[10px] md:text-xs text-rose-600 dark:text-rose-400 font-mono font-medium">
+                    - {stats.spentMoney.toLocaleString()} {currency}
+                </div>
+                {stats.spentMoney > 0 && getPriceReference(stats.spentMoney, language as Language) && (
+                    <div className="mt-2 pt-2 border-t border-rose-200 dark:border-rose-500/20 text-[10px] md:text-xs text-rose-700 dark:text-rose-300 font-medium">
+                        {language === 'hu' ? '≈ ' : language === 'de' ? '≈ ' : '≈ '}
+                        {getPriceReference(stats.spentMoney, language as Language)}
+                    </div>
+                )}
             </div>
         </div>
 

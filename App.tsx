@@ -4,7 +4,6 @@ import { SettingsForm } from './components/SettingsForm';
 import { Calculator } from './components/Calculator';
 import { History } from './components/History';
 import { Levels } from './components/Levels';
-import { Statistics } from './components/Statistics';
 import { Navigation } from './components/Navigation';
 import { TopBar } from './components/TopBar';
 import { Sidebar } from './components/Sidebar';
@@ -19,6 +18,7 @@ import { useLanguage } from './contexts/LanguageContext';
 
 const TOUR_KEY = 'idopenz_tour_completed';
 const SPLASH_SHOWN_KEY = 'tivlo_splash_shown';
+const HIDDEN_ITEMS_KEY = 'tivlo_hidden_items';
 
 // Streak számítás a history alapján
 const calculateStreak = (history: HistoryItem[]): number => {
@@ -224,16 +224,22 @@ const App: React.FC = () => {
             };
             setSettings(newSettings);
             
-            const mappedHistory: HistoryItem[] = (historyData || []).map((item: any) => ({
-                id: item.id,
-                productName: item.product_name,
-                price: item.price,
-                currency: item.currency,
-                totalHoursDecimal: item.total_hours_decimal,
-                decision: item.decision,
-                date: item.date,
-                adviceUsed: item.advice_used
-            }));
+            // Get hidden item IDs from localStorage
+            const hiddenItemsJson = localStorage.getItem(HIDDEN_ITEMS_KEY);
+            const hiddenItemIds: string[] = hiddenItemsJson ? JSON.parse(hiddenItemsJson) : [];
+
+            const mappedHistory: HistoryItem[] = (historyData || [])
+                .filter((item: any) => !hiddenItemIds.includes(item.id))
+                .map((item: any) => ({
+                    id: item.id,
+                    productName: item.product_name,
+                    price: item.price,
+                    currency: item.currency,
+                    totalHoursDecimal: item.total_hours_decimal,
+                    decision: item.decision,
+                    date: item.date,
+                    adviceUsed: item.advice_used
+                }));
             setHistory(mappedHistory);
 
             if (newSettings.isSetup) {
@@ -355,6 +361,8 @@ const App: React.FC = () => {
           const { error } = await supabase.from('history').delete().eq('user_id', session.user.id);
           if (!error) {
             setHistory([]);
+            // Also clear hidden items list
+            localStorage.removeItem(HIDDEN_ITEMS_KEY);
           } else {
              console.error('Error clearing history:', error);
           }
@@ -372,7 +380,7 @@ const App: React.FC = () => {
       const hourlyRate = settings.monthlyNetSalary / (settings.weeklyHours * 4.33);
       const newTotalHoursDecimal = updatedData.price / hourlyRate;
 
-      // Create a new entry instead of updating the existing one
+      // Create a new entry in Supabase (keeping the original for admin purposes)
       const dbItem = {
         user_id: session.user.id,
         product_name: updatedData.productName || t('item_unnamed'),
@@ -399,7 +407,19 @@ const App: React.FC = () => {
           date: data.date,
           adviceUsed: data.advice_used
         };
-        setHistory(prev => [newItem, ...prev]);
+
+        // Save original item ID to hidden items list in localStorage
+        // This way, user won't see it after reload, but it stays in Supabase for admin
+        const hiddenItemsJson = localStorage.getItem(HIDDEN_ITEMS_KEY);
+        const hiddenItemIds: string[] = hiddenItemsJson ? JSON.parse(hiddenItemsJson) : [];
+        if (!hiddenItemIds.includes(originalItem.id)) {
+          hiddenItemIds.push(originalItem.id);
+          localStorage.setItem(HIDDEN_ITEMS_KEY, JSON.stringify(hiddenItemIds));
+        }
+
+        // For user: remove the old item and add the new one (appears as "edit")
+        // For Supabase: both entries remain (original item stays in database)
+        setHistory(prev => [newItem, ...prev.filter(item => item.id !== originalItem.id)]);
       }
     } catch (error) {
       console.error('Error creating edited item:', error);
@@ -443,7 +463,6 @@ const App: React.FC = () => {
       case ViewState.CALCULATOR: return t('nav_calculator');
       case ViewState.HISTORY: return t('nav_history');
       case ViewState.LEVELS: return t('nav_levels');
-      case ViewState.STATISTICS: return t('nav_statistics');
       case ViewState.RESET_PASSWORD: return t('reset_password_title');
       case ViewState.DELETE_ACCOUNT: return t('delete_account_title');
       default: return t('app_name');
@@ -557,10 +576,6 @@ const App: React.FC = () => {
 
                                 {viewState === ViewState.HISTORY && (
                                     <History items={history} onClearHistory={handleClearHistory} onEditItem={handleEditItem} />
-                                )}
-
-                                {viewState === ViewState.STATISTICS && (
-                                    <Statistics history={history} />
                                 )}
 
                                 {viewState === ViewState.LEVELS && (
