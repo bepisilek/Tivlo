@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { isSupabaseConfigured, supabase, SUPABASE_CONFIG_MESSAGE } from './lib/supabaseClient';
 import { SettingsForm } from './components/SettingsForm';
 import { Calculator } from './components/Calculator';
@@ -19,6 +19,65 @@ import { useLanguage } from './contexts/LanguageContext';
 
 const TOUR_KEY = 'idopenz_tour_completed';
 const SPLASH_SHOWN_KEY = 'tivlo_splash_shown';
+
+// Streak számítás a history alapján
+const calculateStreak = (history: HistoryItem[]): number => {
+  if (history.length === 0) return 0;
+
+  // Egyedi napok kinyerése a history-ból
+  const uniqueDays = new Set<string>();
+  history.forEach(item => {
+    const date = new Date(item.date);
+    const dayKey = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+    uniqueDays.add(dayKey);
+  });
+
+  // Napok listája rendezve (legújabbtól)
+  const sortedDays = Array.from(uniqueDays)
+    .map(dayKey => {
+      const [year, month, day] = dayKey.split('-').map(Number);
+      return new Date(year, month, day);
+    })
+    .sort((a, b) => b.getTime() - a.getTime());
+
+  if (sortedDays.length === 0) return 0;
+
+  // Ellenőrizzük, hogy a mai nap vagy a tegnap szerepel-e
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  const latestDay = sortedDays[0];
+  latestDay.setHours(0, 0, 0, 0);
+
+  // Ha a legutóbbi nap nem ma vagy tegnap, a streak 0
+  if (latestDay.getTime() !== today.getTime() && latestDay.getTime() !== yesterday.getTime()) {
+    return 0;
+  }
+
+  // Streak számolása
+  let streak = 1;
+  let currentDate = latestDay;
+
+  for (let i = 1; i < sortedDays.length; i++) {
+    const prevDate = new Date(currentDate);
+    prevDate.setDate(prevDate.getDate() - 1);
+    prevDate.setHours(0, 0, 0, 0);
+
+    const checkDate = sortedDays[i];
+    checkDate.setHours(0, 0, 0, 0);
+
+    if (checkDate.getTime() === prevDate.getTime()) {
+      streak++;
+      currentDate = checkDate;
+    } else {
+      break;
+    }
+  }
+
+  return streak;
+};
 
 const DEFAULT_SETTINGS: UserSettings = {
   monthlyNetSalary: 0,
@@ -42,6 +101,9 @@ const App: React.FC = () => {
   const [showTour, setShowTour] = useState(false);
   const [tourStep, setTourStep] = useState(0);
   const [session, setSession] = useState<any>(null);
+
+  // Streak számítás
+  const streak = useMemo(() => calculateStreak(history), [history]);
 
   // Splash Screen Logic
   useEffect(() => {
@@ -452,7 +514,7 @@ const App: React.FC = () => {
 
                     {viewState === ViewState.SETTINGS ? (
                         <div className="flex flex-col h-full">
-                            <TopBar title={t('settings_title')} onMenuClick={handleMenuClick} />
+                            <TopBar title={t('settings_title')} onMenuClick={handleMenuClick} streak={streak} />
                             <div className="flex-1 overflow-hidden">
                         <SettingsForm
                             initialSettings={settings}
@@ -463,7 +525,7 @@ const App: React.FC = () => {
                         </div>
                     ) : viewState === ViewState.RESET_PASSWORD ? (
                         <div className="flex flex-col h-full">
-                            <TopBar title={t('reset_password_title')} onMenuClick={handleMenuClick} />
+                            <TopBar title={t('reset_password_title')} onMenuClick={handleMenuClick} streak={streak} />
                             <div className="flex-1 overflow-hidden">
                                 <ResetPassword
                                     onSuccess={handleResetSuccess}
@@ -473,7 +535,7 @@ const App: React.FC = () => {
                         </div>
                     ) : viewState === ViewState.DELETE_ACCOUNT ? (
                         <div className="flex flex-col h-full">
-                            <TopBar title={t('delete_account_title')} onMenuClick={handleMenuClick} />
+                            <TopBar title={t('delete_account_title')} onMenuClick={handleMenuClick} streak={streak} />
                             <div className="flex-1 overflow-hidden">
                                 <DeleteAccount
                                     onSuccess={handleDeleteSuccess}
@@ -483,7 +545,7 @@ const App: React.FC = () => {
                         </div>
                     ) : (
                         <div className="flex flex-col h-full">
-                            <TopBar title={getPageTitle()} onMenuClick={handleMenuClick} />
+                            <TopBar title={getPageTitle()} onMenuClick={handleMenuClick} streak={streak} />
                             
                             <div className="flex-1 relative overflow-hidden">
                                 {viewState === ViewState.CALCULATOR && (

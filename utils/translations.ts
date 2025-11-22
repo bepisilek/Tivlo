@@ -215,6 +215,11 @@ export const translations = {
     stats_saved_time: 'Megspórolt munkaidő',
     stats_spent_time: 'Elköltött munkaidő',
     stats_decision_count: 'A kiválasztott időszakban {count} döntést hoztál.',
+
+    // Streak
+    streak_info: 'Streak információ',
+    streak_explanation: 'A streak azt mutatja, hány egymást követő napon használtad a számolót. Tartsd fenn a sorozatot a mindennapos tudatos döntésekkel!',
+    streak_next_milestone: 'Még {days} nap a {level} napos mérföldkőig!',
   },
   en: {
     // General
@@ -430,6 +435,11 @@ export const translations = {
     stats_saved_time: 'Saved Work Time',
     stats_spent_time: 'Spent Work Time',
     stats_decision_count: 'You made {count} decisions in this period.',
+
+    // Streak
+    streak_info: 'Streak info',
+    streak_explanation: 'Your streak shows how many consecutive days you used the calculator. Keep it going with daily conscious decisions!',
+    streak_next_milestone: '{days} more days to reach {level} day milestone!',
   },
   de: {
     // General
@@ -645,5 +655,10 @@ export const translations = {
     stats_saved_time: 'Gesparte Arbeitszeit',
     stats_spent_time: 'Aufgewendete Arbeitszeit',
     stats_decision_count: 'Du hast in diesem Zeitraum {count} Entscheidungen getroffen.',
+
+    // Streak
+    streak_info: 'Streak-Info',
+    streak_explanation: 'Dein Streak zeigt, wie viele aufeinanderfolgende Tage du den Rechner benutzt hast. Halte ihn mit täglichen bewussten Entscheidungen aufrecht!',
+    streak_next_milestone: 'Noch {days} Tage bis zum {level}-Tage-Meilenstein!',
   }
 };
