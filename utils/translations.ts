@@ -228,7 +228,7 @@ export const translations = {
     challenges_title: 'Kihívások',
     challenges_subtitle: 'Válassz egy játékot és szórakozz!',
     challenge_coming_soon: 'Hamarosan',
-    challenge_wordle_title: 'Szókitaláló',
+    challenge_wordle_title: 'Tivlo Szavak',
     challenge_wordle_desc: 'Találd ki az 5 betűs szót',
     challenge_memory_title: 'Memória',
     challenge_memory_desc: 'Párosítsd a kártyákat',
@@ -241,8 +241,8 @@ export const translations = {
     challenge_streak_title: 'Napi kihívás',
     challenge_streak_desc: 'Minden nap új feladat',
 
-    // Wordle Game
-    wordle_title: 'Szókitaláló',
+    // Tivlo Szavak Game
+    wordle_title: 'Tivlo Szavak',
     wordle_subtitle: 'Találd ki a napi 5 betűs angol szót!',
     wordle_new_game: 'Új játék',
     wordle_won: 'Gratulálok!',
@@ -517,7 +517,7 @@ export const translations = {
     challenges_title: 'Challenges',
     challenges_subtitle: 'Pick a game and have fun!',
     challenge_coming_soon: 'Coming soon',
-    challenge_wordle_title: 'Wordle',
+    challenge_wordle_title: 'Tivlo Words',
     challenge_wordle_desc: 'Guess the 5-letter word',
     challenge_memory_title: 'Memory',
     challenge_memory_desc: 'Match the cards',
@@ -530,8 +530,8 @@ export const translations = {
     challenge_streak_title: 'Daily Challenge',
     challenge_streak_desc: 'New task every day',
 
-    // Wordle Game
-    wordle_title: 'Wordle',
+    // Tivlo Words Game
+    wordle_title: 'Tivlo Words',
     wordle_subtitle: 'Guess the daily 5-letter English word!',
     wordle_new_game: 'New game',
     wordle_won: 'Congratulations!',
@@ -806,7 +806,7 @@ export const translations = {
     challenges_title: 'Herausforderungen',
     challenges_subtitle: 'Wähle ein Spiel und hab Spaß!',
     challenge_coming_soon: 'Demnächst',
-    challenge_wordle_title: 'Wordle',
+    challenge_wordle_title: 'Tivlo Wörter',
     challenge_wordle_desc: 'Errate das 5-Buchstaben-Wort',
     challenge_memory_title: 'Memory',
     challenge_memory_desc: 'Finde die Paare',
@@ -819,8 +819,8 @@ export const translations = {
     challenge_streak_title: 'Tägliche Herausforderung',
     challenge_streak_desc: 'Jeden Tag eine neue Aufgabe',
 
-    // Wordle Game
-    wordle_title: 'Wordle',
+    // Tivlo Words Game
+    wordle_title: 'Tivlo Wörter',
     wordle_subtitle: 'Errate das tägliche 5-Buchstaben englische Wort!',
     wordle_new_game: 'Neues Spiel',
     wordle_won: 'Herzlichen Glückwunsch!',
