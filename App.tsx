@@ -4,7 +4,6 @@ import { SettingsForm } from './components/SettingsForm';
 import { Calculator } from './components/Calculator';
 import { History } from './components/History';
 import { Levels } from './components/Levels';
-import { Statistics } from './components/Statistics';
 import { Navigation } from './components/Navigation';
 import { TopBar } from './components/TopBar';
 import { Sidebar } from './components/Sidebar';
@@ -361,6 +360,19 @@ const App: React.FC = () => {
       }
   };
 
+  // UI-on lokálisan módosítja a tételt (nem hoz létre újat)
+  const handleUpdateLocalItem = (
+    itemId: string,
+    updatedData: { productName: string; price: number; decision: 'bought' | 'saved'; totalHoursDecimal: number }
+  ) => {
+    setHistory(prev => prev.map(item =>
+      item.id === itemId
+        ? { ...item, ...updatedData }
+        : item
+    ));
+  };
+
+  // Supabase-ben új tételt hoz létre (a UI-on már módosítottuk)
   const handleEditItem = async (
     originalItem: HistoryItem,
     updatedData: { productName: string; price: number; decision: 'bought' | 'saved' }
@@ -372,7 +384,7 @@ const App: React.FC = () => {
       const hourlyRate = settings.monthlyNetSalary / (settings.weeklyHours * 4.33);
       const newTotalHoursDecimal = updatedData.price / hourlyRate;
 
-      // Create a new entry instead of updating the existing one
+      // Create a new entry in Supabase (separate record for analytics)
       const dbItem = {
         user_id: session.user.id,
         product_name: updatedData.productName || t('item_unnamed'),
@@ -384,25 +396,12 @@ const App: React.FC = () => {
         date: new Date().toISOString()
       };
 
-      const { data, error } = await supabase.from('history').insert(dbItem).select().single();
+      const { error } = await supabase.from('history').insert(dbItem);
 
       if (error) throw error;
-
-      if (data) {
-        const newItem: HistoryItem = {
-          id: data.id,
-          productName: data.product_name,
-          price: data.price,
-          currency: data.currency,
-          totalHoursDecimal: data.total_hours_decimal,
-          decision: data.decision,
-          date: data.date,
-          adviceUsed: data.advice_used
-        };
-        setHistory(prev => [newItem, ...prev]);
-      }
+      // Nem adjuk hozzá a listához, mert a UI-on már módosítottuk a meglévő tételt
     } catch (error) {
-      console.error('Error creating edited item:', error);
+      console.error('Error creating edited item in Supabase:', error);
     }
   };
 
@@ -556,11 +555,12 @@ const App: React.FC = () => {
                                 )}
 
                                 {viewState === ViewState.HISTORY && (
-                                    <History items={history} onClearHistory={handleClearHistory} onEditItem={handleEditItem} />
-                                )}
-
-                                {viewState === ViewState.STATISTICS && (
-                                    <Statistics history={history} />
+                                    <History
+                                        items={history}
+                                        onClearHistory={handleClearHistory}
+                                        onEditItem={handleEditItem}
+                                        onUpdateLocalItem={handleUpdateLocalItem}
+                                    />
                                 )}
 
                                 {viewState === ViewState.LEVELS && (
