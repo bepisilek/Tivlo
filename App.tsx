@@ -14,6 +14,7 @@ import { OnboardingTour } from './components/OnboardingTour';
 import { ResetPassword } from './components/ResetPassword';
 import { DeleteAccount } from './components/DeleteAccount';
 import { SplashScreen } from './components/SplashScreen';
+import { TimeBasedBubble } from './components/TimeBasedBubble';
 import { UserSettings, ViewState, HistoryItem } from './types';
 import { useLanguage } from './contexts/LanguageContext';
 
@@ -521,6 +522,8 @@ const App: React.FC = () => {
                     {showTour && viewState === ViewState.CALCULATOR && (
                         <OnboardingTour onComplete={handleTourComplete} onStepChange={setTourStep} />
                     )}
+
+                    <TimeBasedBubble />
 
                     <Sidebar
                         isOpen={isSidebarOpen}
