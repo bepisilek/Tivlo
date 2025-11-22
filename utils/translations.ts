@@ -114,6 +114,7 @@ export const translations = {
     menu_delete_account: 'Fiók törlése',
     menu_settings: 'Beállítások',
     menu_support: 'Problémád van? Írj nekünk',
+    menu_help: 'Súgó',
     menu_follow_us: 'Kövess minket',
 
     // Reset Password
@@ -325,6 +326,7 @@ export const translations = {
     menu_delete_account: 'Delete account',
     menu_settings: 'Settings',
     menu_support: 'Having a problem? Contact us',
+    menu_help: 'Help',
     menu_follow_us: 'Follow us',
 
     // Reset Password
@@ -536,6 +538,7 @@ export const translations = {
     menu_delete_account: 'Konto löschen',
     menu_settings: 'Einstellungen',
     menu_support: 'Hast du ein Problem? Schreib uns',
+    menu_help: 'Hilfe',
     menu_follow_us: 'Folge uns',
 
     // Reset Password
