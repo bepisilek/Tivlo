@@ -3,6 +3,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { Lock, Sparkles, Brain, Target, Zap, Trophy, HelpCircle } from 'lucide-react';
 import { WordleGame } from './WordleGame';
 import { DailyQuiz } from './DailyQuiz';
+import { MemoryGame } from './MemoryGame';
 
 interface ChallengesProps {}
 
@@ -33,7 +34,7 @@ export const Challenges: React.FC<ChallengesProps> = () => {
       icon: Brain,
       titleKey: 'challenge_memory_title',
       descKey: 'challenge_memory_desc',
-      available: false,
+      available: true,
       color: 'blue'
     },
     {
@@ -142,6 +143,10 @@ export const Challenges: React.FC<ChallengesProps> = () => {
 
   if (activeGame === 'quiz') {
     return <DailyQuiz onBack={() => setActiveGame(null)} />;
+  }
+
+  if (activeGame === 'memory') {
+    return <MemoryGame onBack={() => setActiveGame(null)} />;
   }
 
   return (
