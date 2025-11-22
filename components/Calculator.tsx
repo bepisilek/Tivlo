@@ -233,6 +233,11 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
             <Button onClick={handleCalculate} fullWidth size="lg" disabled={!price} className="mt-4">
                 <Play size={18} /> {t('calculate_btn')}
             </Button>
+
+            {/* Banner Carousel - positioned below calculate button */}
+            <div className="mt-4">
+              <BannerCarousel />
+            </div>
         </div>
 
         {/* Result Display */}
@@ -297,11 +302,6 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
           </div>
         )}
       </main>
-
-      {/* Banner Carousel - positioned at bottom, compact size for mobile */}
-      <div className="shrink-0 w-full max-w-md mx-auto">
-        <BannerCarousel />
-      </div>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 
 // Dynamically import all images from the carouselbanners folder
 // When new images are added to the folder, they will be included after rebuild
@@ -10,6 +10,11 @@ const bannerModules = import.meta.glob('/public/carouselbanners/*.{png,jpg,jpeg,
 export const BannerCarousel: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [failedImages, setFailedImages] = useState<Set<string>>(new Set());
+
+  // Touch/swipe state
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
+  const minSwipeDistance = 50; // minimum swipe distance in pixels
 
   // Extract banner URLs from the imported modules
   const banners = useMemo(() => {
@@ -30,6 +35,37 @@ export const BannerCarousel: React.FC = () => {
   const handleImageError = useCallback((banner: string) => {
     setFailedImages((prev) => new Set(prev).add(banner));
   }, []);
+
+  // Touch event handlers for swipe navigation
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchEndX.current = null;
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    if (touchStartX.current === null || touchEndX.current === null) return;
+    if (validBanners.length <= 1) return;
+
+    const distance = touchStartX.current - touchEndX.current;
+    const isSwipe = Math.abs(distance) > minSwipeDistance;
+
+    if (isSwipe) {
+      if (distance > 0) {
+        // Swipe left - go to next slide
+        setCurrentIndex((prev) => (prev + 1) % validBanners.length);
+      } else {
+        // Swipe right - go to previous slide
+        setCurrentIndex((prev) => (prev - 1 + validBanners.length) % validBanners.length);
+      }
+    }
+
+    touchStartX.current = null;
+    touchEndX.current = null;
+  }, [validBanners.length]);
 
   // Auto-rotate every 2.5 seconds
   useEffect(() => {
@@ -55,8 +91,14 @@ export const BannerCarousel: React.FC = () => {
   }
 
   return (
-    <div className="w-full px-4 py-2">
-      <div className="relative w-full overflow-hidden rounded-lg shadow-md" style={{ aspectRatio: '2 / 1' }}>
+    <div className="w-full py-2">
+      <div
+        className="relative w-full overflow-hidden rounded-lg shadow-md touch-pan-y cursor-grab active:cursor-grabbing"
+        style={{ aspectRatio: '2 / 1' }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
         {validBanners.map((banner, index) => (
           <img
             key={banner}
