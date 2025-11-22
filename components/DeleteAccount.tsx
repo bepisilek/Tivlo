@@ -41,30 +41,15 @@ export const DeleteAccount: React.FC<DeleteAccountProps> = ({ onSuccess, onCance
       await supabase.from('history').delete().eq('user_id', user.id);
       await supabase.from('profiles').delete().eq('id', user.id);
 
-      // 2. Most törölhetjük magát az auth user-t
-      // FONTOS: Ez egy admin művelet, amit csak a szolgáltatói oldalról lehet hívni
-      // Az anon kulccsal NEM lehet közvetlenül törölni az auth.users táblát
-      
-      // Megoldás: A Supabase RLS policy-val biztosítjuk, hogy a user törölhesse magát
-      // VAGY egy Edge Function-t használunk, ami a service role key-vel fut
-      
-      // Először próbáljuk meg a user.deleteUser() metódust (ha elérhető)
-      const { error: deleteError } = await supabase.auth.admin.deleteUser(user.id);
-      
-      if (deleteError) {
-        // Ha ez nem működik (mert nincs admin jogunk), akkor SQL trigger-rel oldjuk meg
-        // Létrehozunk egy speciális "delete_request" táblát, amit a trigger figyel
-        await supabase.from('delete_requests').insert({ user_id: user.id });
-        
-        // Majd kijelentkeztetjük a usert
-        await supabase.auth.signOut();
-        
-        setError(null);
-        onSuccess();
-        return;
-      }
+      // 2. A felhasználó törlését egy delete_requests táblán keresztül kezeljük
+      // A tényleges törlést egy Supabase Edge Function vagy SQL trigger végzi
+      // service_role kulccsal, ami biztonságos szerveroldali művelet
+      // SECURITY: Ne használjunk admin.deleteUser()-t kliens oldalon - az sosem fog működni
+      // anon kulccsal és biztonsági kockázatot jelentene ha működne
 
-      // Ha sikerült a direkt törlés, kijelentkeztetjük a usert
+      await supabase.from('delete_requests').insert({ user_id: user.id });
+
+      // Kijelentkeztetjük a usert
       await supabase.auth.signOut();
       onSuccess();
       
