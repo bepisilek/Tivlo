@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
-import { ArrowLeft, Delete, CornerDownLeft, Share2 } from 'lucide-react';
+import { ArrowLeft, Delete, CornerDownLeft, Share2, X } from 'lucide-react';
 import { Button } from './Button';
 
 interface WordleGameProps {
@@ -26,7 +26,7 @@ const getDailyWordIndex = (wordListLength: number): number => {
 // Get today's date string for localStorage key
 const getTodayKey = (): string => {
   const today = new Date();
-  return `wordle_${today.getFullYear()}_${today.getMonth()}_${today.getDate()}`;
+  return `tivlo_szavak_${today.getFullYear()}_${today.getMonth()}_${today.getDate()}`;
 };
 
 type LetterStatus = 'correct' | 'present' | 'absent' | 'empty';
@@ -67,6 +67,7 @@ export const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
   const [shakeRow, setShakeRow] = useState(false);
   const [revealRow, setRevealRow] = useState<number | null>(null);
   const [revealingGuess, setRevealingGuess] = useState<string | null>(null);
+  const [showResultModal, setShowResultModal] = useState(true);
 
   // Load word list on mount
   useEffect(() => {
@@ -275,7 +276,7 @@ export const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
       }).join('')
     ).join('\n');
 
-    const text = `Tivlo Wordle ${gameState.guesses.length}/${MAX_GUESSES}\n\n${emojiGrid}`;
+    const text = `Tivlo Szavak ${gameState.guesses.length}/${MAX_GUESSES}\n\n${emojiGrid}`;
 
     if (navigator.share) {
       navigator.share({ text });
@@ -375,9 +376,15 @@ export const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
       </div>
 
       {/* Game Over Modal */}
-      {(gameState.gameStatus === 'won' || gameState.gameStatus === 'lost') && (
+      {(gameState.gameStatus === 'won' || gameState.gameStatus === 'lost') && showResultModal && (
         <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 max-w-xs w-full shadow-xl border border-slate-200 dark:border-slate-700 text-center">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 max-w-xs w-full shadow-xl border border-slate-200 dark:border-slate-700 text-center relative">
+            <button
+              onClick={() => setShowResultModal(false)}
+              className="absolute top-3 right-3 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            >
+              <X size={20} className="text-slate-500 dark:text-slate-400" />
+            </button>
             <h3 className={`text-2xl font-bold mb-2 ${gameState.gameStatus === 'won' ? 'text-green-500' : 'text-rose-500'}`}>
               {gameState.gameStatus === 'won' ? t('wordle_won') : t('wordle_lost')}
             </h3>
@@ -403,9 +410,15 @@ export const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
       )}
 
       {/* Already Played Modal */}
-      {gameState.gameStatus === 'already_played' && (
+      {gameState.gameStatus === 'already_played' && showResultModal && (
         <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 max-w-xs w-full shadow-xl border border-slate-200 dark:border-slate-700 text-center">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 max-w-xs w-full shadow-xl border border-slate-200 dark:border-slate-700 text-center relative">
+            <button
+              onClick={() => setShowResultModal(false)}
+              className="absolute top-3 right-3 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            >
+              <X size={20} className="text-slate-500 dark:text-slate-400" />
+            </button>
             <h3 className="text-xl font-bold mb-2 text-slate-900 dark:text-white">
               {t('wordle_already_played')}
             </h3>
