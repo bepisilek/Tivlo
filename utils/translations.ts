@@ -112,6 +112,9 @@ export const translations = {
     menu_edit_profile: 'Profil szerkesztése',
     menu_reset_password: 'Jelszó módosítása',
     menu_delete_account: 'Fiók törlése',
+    menu_settings: 'Beállítások',
+    menu_support: 'Problémád van? Írj nekünk',
+    menu_follow_us: 'Kövess minket',
 
     // Reset Password
     reset_password_title: 'Új jelszó beállítása',
@@ -320,6 +323,9 @@ export const translations = {
     menu_edit_profile: 'Edit Profile',
     menu_reset_password: 'Change password',
     menu_delete_account: 'Delete account',
+    menu_settings: 'Settings',
+    menu_support: 'Having a problem? Contact us',
+    menu_follow_us: 'Follow us',
 
     // Reset Password
     reset_password_title: 'Set new password',
@@ -528,6 +534,9 @@ export const translations = {
     menu_edit_profile: 'Profil bearbeiten',
     menu_reset_password: 'Passwort ändern',
     menu_delete_account: 'Konto löschen',
+    menu_settings: 'Einstellungen',
+    menu_support: 'Hast du ein Problem? Schreib uns',
+    menu_follow_us: 'Folge uns',
 
     // Reset Password
     reset_password_title: 'Neues Passwort festlegen',
