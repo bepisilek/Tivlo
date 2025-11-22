@@ -66,6 +66,7 @@ export const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
 
   const [shakeRow, setShakeRow] = useState(false);
   const [revealRow, setRevealRow] = useState<number | null>(null);
+  const [revealingGuess, setRevealingGuess] = useState<string | null>(null);
 
   // Load word list on mount
   useEffect(() => {
@@ -191,22 +192,30 @@ export const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
     const won = guess === gameState.targetWord;
     const lost = !won && newGuesses.length >= MAX_GUESSES;
 
-    setRevealRow(newGuesses.length - 1);
+    // Store the guess being revealed and start animation
+    setRevealingGuess(guess);
+    setRevealRow(gameState.guesses.length);
+
+    // Clear currentGuess immediately to prevent duplicate display
+    setGameState(prev => ({
+      ...prev,
+      currentGuess: ''
+    }));
 
     setTimeout(() => {
-      setGameState({
-        ...gameState,
+      setGameState(prev => ({
+        ...prev,
         guesses: newGuesses,
-        currentGuess: '',
         gameStatus: won ? 'won' : lost ? 'lost' : 'playing',
         letterStatuses: newLetterStatuses
-      });
+      }));
       setRevealRow(null);
+      setRevealingGuess(null);
     }, WORD_LENGTH * 300);
   }, [gameState, wordSet]);
 
   const handleKeyPress = useCallback((key: string) => {
-    if (gameState.gameStatus !== 'playing') return;
+    if (gameState.gameStatus !== 'playing' || revealRow !== null) return;
 
     if (key === 'ENTER') {
       submitGuess();
@@ -221,7 +230,7 @@ export const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
         currentGuess: prev.currentGuess + key.toLowerCase()
       }));
     }
-  }, [gameState, submitGuess]);
+  }, [gameState, submitGuess, revealRow]);
 
   // Physical keyboard support
   useEffect(() => {
@@ -280,7 +289,7 @@ export const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
 
     for (let i = 0; i < MAX_GUESSES; i++) {
       const guess = gameState.guesses[i];
-      const isCurrentRow = i === gameState.guesses.length && gameState.gameStatus === 'playing';
+      const isCurrentRow = i === gameState.guesses.length && gameState.gameStatus === 'playing' && revealRow === null;
       const isRevealing = revealRow === i;
 
       rows.push(
@@ -293,9 +302,15 @@ export const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
             let status: LetterStatus = 'empty';
 
             if (guess) {
+              // Already submitted guess
               letter = guess[j];
               status = getLetterStatus(letter, j, guess, gameState.targetWord);
+            } else if (isRevealing && revealingGuess) {
+              // Currently revealing guess - show letters and colors
+              letter = revealingGuess[j];
+              status = getLetterStatus(letter, j, revealingGuess, gameState.targetWord);
             } else if (isCurrentRow) {
+              // Current input row
               letter = gameState.currentGuess[j] || '';
             }
 
@@ -306,7 +321,7 @@ export const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
                   w-12 h-12 md:w-14 md:h-14 flex items-center justify-center
                   text-xl md:text-2xl font-bold uppercase border-2 rounded-lg
                   transition-all duration-300
-                  ${getStatusColor(guess ? status : 'empty')}
+                  ${getStatusColor((guess || (isRevealing && revealingGuess)) ? status : 'empty')}
                   ${isCurrentRow && letter ? 'scale-105 border-slate-500' : ''}
                   ${isRevealing ? 'animate-flip' : ''}
                 `}
