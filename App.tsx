@@ -4,6 +4,7 @@ import { SettingsForm } from './components/SettingsForm';
 import { Calculator } from './components/Calculator';
 import { History } from './components/History';
 import { Levels } from './components/Levels';
+import { Challenges } from './components/Challenges';
 import { Navigation } from './components/Navigation';
 import { TopBar } from './components/TopBar';
 import { Sidebar } from './components/Sidebar';
@@ -463,6 +464,7 @@ const App: React.FC = () => {
       case ViewState.CALCULATOR: return t('nav_calculator');
       case ViewState.HISTORY: return t('nav_history');
       case ViewState.LEVELS: return t('nav_levels');
+      case ViewState.CHALLENGES: return t('nav_challenges');
       case ViewState.RESET_PASSWORD: return t('reset_password_title');
       case ViewState.DELETE_ACCOUNT: return t('delete_account_title');
       default: return t('app_name');
@@ -580,6 +582,10 @@ const App: React.FC = () => {
 
                                 {viewState === ViewState.LEVELS && (
                                     <Levels history={history} />
+                                )}
+
+                                {viewState === ViewState.CHALLENGES && (
+                                    <Challenges />
                                 )}
                             </div>
 

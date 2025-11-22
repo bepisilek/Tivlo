@@ -220,6 +220,41 @@ export const translations = {
     streak_info: 'Streak információ',
     streak_explanation: 'A streak azt mutatja, hány egymást követő napon használtad a számolót. Tartsd fenn a sorozatot a mindennapos tudatos döntésekkel!',
     streak_next_milestone: 'Még {days} nap a {level} napos mérföldkőig!',
+
+    // Navigation - Challenges
+    nav_challenges: 'Kihívások',
+
+    // Challenges Screen
+    challenges_title: 'Kihívások',
+    challenges_subtitle: 'Válassz egy játékot és szórakozz!',
+    challenge_coming_soon: 'Hamarosan',
+    challenge_wordle_title: 'Szókitaláló',
+    challenge_wordle_desc: 'Találd ki az 5 betűs szót',
+    challenge_memory_title: 'Memória',
+    challenge_memory_desc: 'Párosítsd a kártyákat',
+    challenge_quiz_title: 'Kvíz',
+    challenge_quiz_desc: 'Teszteld a tudásod',
+    challenge_speed_title: 'Gyorsaság',
+    challenge_speed_desc: 'Ki a leggyorsabb?',
+    challenge_puzzle_title: 'Puzzle',
+    challenge_puzzle_desc: 'Rakd össze a képet',
+    challenge_streak_title: 'Napi kihívás',
+    challenge_streak_desc: 'Minden nap új feladat',
+
+    // Wordle Game
+    wordle_title: 'Szókitaláló',
+    wordle_subtitle: 'Találd ki a napi 5 betűs szót!',
+    wordle_new_game: 'Új játék',
+    wordle_won: 'Gratulálok!',
+    wordle_lost: 'Sajnos vesztettél',
+    wordle_answer: 'A megoldás',
+    wordle_guesses: '{count} próbálkozásból sikerült!',
+    wordle_share: 'Megosztás',
+    wordle_play_again: 'Új játék',
+
+    // Tour - Challenges
+    tour_challenges_title: 'Kihívások',
+    tour_challenges_desc: 'Játssz szórakoztató mini játékokkal és szerezz plusz pontokat!',
   },
   en: {
     // General
@@ -440,6 +475,41 @@ export const translations = {
     streak_info: 'Streak info',
     streak_explanation: 'Your streak shows how many consecutive days you used the calculator. Keep it going with daily conscious decisions!',
     streak_next_milestone: '{days} more days to reach {level} day milestone!',
+
+    // Navigation - Challenges
+    nav_challenges: 'Challenges',
+
+    // Challenges Screen
+    challenges_title: 'Challenges',
+    challenges_subtitle: 'Pick a game and have fun!',
+    challenge_coming_soon: 'Coming soon',
+    challenge_wordle_title: 'Wordle',
+    challenge_wordle_desc: 'Guess the 5-letter word',
+    challenge_memory_title: 'Memory',
+    challenge_memory_desc: 'Match the cards',
+    challenge_quiz_title: 'Quiz',
+    challenge_quiz_desc: 'Test your knowledge',
+    challenge_speed_title: 'Speed',
+    challenge_speed_desc: 'Who is the fastest?',
+    challenge_puzzle_title: 'Puzzle',
+    challenge_puzzle_desc: 'Complete the picture',
+    challenge_streak_title: 'Daily Challenge',
+    challenge_streak_desc: 'New task every day',
+
+    // Wordle Game
+    wordle_title: 'Wordle',
+    wordle_subtitle: 'Guess the daily 5-letter word!',
+    wordle_new_game: 'New game',
+    wordle_won: 'Congratulations!',
+    wordle_lost: 'You lost',
+    wordle_answer: 'The answer was',
+    wordle_guesses: 'Solved in {count} guesses!',
+    wordle_share: 'Share',
+    wordle_play_again: 'Play again',
+
+    // Tour - Challenges
+    tour_challenges_title: 'Challenges',
+    tour_challenges_desc: 'Play fun mini-games and earn extra points!',
   },
   de: {
     // General
@@ -660,5 +730,40 @@ export const translations = {
     streak_info: 'Streak-Info',
     streak_explanation: 'Dein Streak zeigt, wie viele aufeinanderfolgende Tage du den Rechner benutzt hast. Halte ihn mit täglichen bewussten Entscheidungen aufrecht!',
     streak_next_milestone: 'Noch {days} Tage bis zum {level}-Tage-Meilenstein!',
+
+    // Navigation - Challenges
+    nav_challenges: 'Herausforderungen',
+
+    // Challenges Screen
+    challenges_title: 'Herausforderungen',
+    challenges_subtitle: 'Wähle ein Spiel und hab Spaß!',
+    challenge_coming_soon: 'Demnächst',
+    challenge_wordle_title: 'Wordle',
+    challenge_wordle_desc: 'Errate das 5-Buchstaben-Wort',
+    challenge_memory_title: 'Memory',
+    challenge_memory_desc: 'Finde die Paare',
+    challenge_quiz_title: 'Quiz',
+    challenge_quiz_desc: 'Teste dein Wissen',
+    challenge_speed_title: 'Geschwindigkeit',
+    challenge_speed_desc: 'Wer ist am schnellsten?',
+    challenge_puzzle_title: 'Puzzle',
+    challenge_puzzle_desc: 'Vervollständige das Bild',
+    challenge_streak_title: 'Tägliche Herausforderung',
+    challenge_streak_desc: 'Jeden Tag eine neue Aufgabe',
+
+    // Wordle Game
+    wordle_title: 'Wordle',
+    wordle_subtitle: 'Errate das tägliche 5-Buchstaben-Wort!',
+    wordle_new_game: 'Neues Spiel',
+    wordle_won: 'Herzlichen Glückwunsch!',
+    wordle_lost: 'Du hast verloren',
+    wordle_answer: 'Die Lösung war',
+    wordle_guesses: 'In {count} Versuchen gelöst!',
+    wordle_share: 'Teilen',
+    wordle_play_again: 'Nochmal spielen',
+
+    // Tour - Challenges
+    tour_challenges_title: 'Herausforderungen',
+    tour_challenges_desc: 'Spiele unterhaltsame Minispiele und sammle Extrapunkte!',
   }
 };

@@ -163,7 +163,7 @@ export const History: React.FC<HistoryProps> = ({ items, onClearHistory, onEditI
 
               <div className="pt-2">
                 <Button onClick={handleSaveEdit} fullWidth>
-                  {t('save_as_new')}
+                  {t('save')}
                 </Button>
                 <p className="text-[10px] text-center text-slate-400 mt-2">{t('edit_creates_new')}</p>
               </div>
