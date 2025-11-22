@@ -243,7 +243,7 @@ export const translations = {
 
     // Wordle Game
     wordle_title: 'Szókitaláló',
-    wordle_subtitle: 'Találd ki a napi 5 betűs szót!',
+    wordle_subtitle: 'Találd ki a napi 5 betűs angol szót!',
     wordle_new_game: 'Új játék',
     wordle_won: 'Gratulálok!',
     wordle_lost: 'Sajnos vesztettél',
@@ -251,6 +251,9 @@ export const translations = {
     wordle_guesses: '{count} próbálkozásból sikerült!',
     wordle_share: 'Megosztás',
     wordle_play_again: 'Új játék',
+    wordle_invalid_word: 'Nem érvényes angol szó',
+    wordle_already_played: 'Ma már játszottál!',
+    wordle_come_back: 'Gyere vissza holnap egy új szóért!',
 
     // Tour - Challenges
     tour_challenges_title: 'Kihívások',
@@ -529,7 +532,7 @@ export const translations = {
 
     // Wordle Game
     wordle_title: 'Wordle',
-    wordle_subtitle: 'Guess the daily 5-letter word!',
+    wordle_subtitle: 'Guess the daily 5-letter English word!',
     wordle_new_game: 'New game',
     wordle_won: 'Congratulations!',
     wordle_lost: 'You lost',
@@ -537,6 +540,9 @@ export const translations = {
     wordle_guesses: 'Solved in {count} guesses!',
     wordle_share: 'Share',
     wordle_play_again: 'Play again',
+    wordle_invalid_word: 'Not a valid English word',
+    wordle_already_played: 'You already played today!',
+    wordle_come_back: 'Come back tomorrow for a new word!',
 
     // Tour - Challenges
     tour_challenges_title: 'Challenges',
@@ -815,7 +821,7 @@ export const translations = {
 
     // Wordle Game
     wordle_title: 'Wordle',
-    wordle_subtitle: 'Errate das tägliche 5-Buchstaben-Wort!',
+    wordle_subtitle: 'Errate das tägliche 5-Buchstaben englische Wort!',
     wordle_new_game: 'Neues Spiel',
     wordle_won: 'Herzlichen Glückwunsch!',
     wordle_lost: 'Du hast verloren',
@@ -823,6 +829,9 @@ export const translations = {
     wordle_guesses: 'In {count} Versuchen gelöst!',
     wordle_share: 'Teilen',
     wordle_play_again: 'Nochmal spielen',
+    wordle_invalid_word: 'Kein gültiges englisches Wort',
+    wordle_already_played: 'Du hast heute schon gespielt!',
+    wordle_come_back: 'Komm morgen für ein neues Wort wieder!',
 
     // Tour - Challenges
     tour_challenges_title: 'Herausforderungen',
