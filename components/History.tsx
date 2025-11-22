@@ -1,15 +1,21 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { HistoryItem } from '../types';
-import { Trash2, TrendingUp, TrendingDown, ShoppingBag } from 'lucide-react';
+import { Trash2, TrendingUp, TrendingDown, ShoppingBag, Pencil } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 interface HistoryProps {
   items: HistoryItem[];
   onClearHistory: () => void;
+  onEditItem: (originalId: string, updatedItem: Omit<HistoryItem, 'id' | 'date'>) => Promise<void>;
 }
 
-export const History: React.FC<HistoryProps> = ({ items, onClearHistory }) => {
+export const History: React.FC<HistoryProps> = ({ items, onClearHistory, onEditItem }) => {
   const { t } = useLanguage();
+  const [editingItem, setEditingItem] = useState<HistoryItem | null>(null);
+  const [productName, setProductName] = useState('');
+  const [price, setPrice] = useState('');
+  const [decision, setDecision] = useState<'bought' | 'saved'>('saved');
+  const [isSavingEdit, setIsSavingEdit] = useState(false);
 
   const totalSavedHours = items
     .filter(i => i.decision === 'saved')
@@ -18,6 +24,46 @@ export const History: React.FC<HistoryProps> = ({ items, onClearHistory }) => {
   const totalSpentHours = items
     .filter(i => i.decision === 'bought')
     .reduce((acc, curr) => acc + curr.totalHoursDecimal, 0);
+
+  useEffect(() => {
+    if (editingItem) {
+      setProductName(editingItem.productName);
+      setPrice(editingItem.price.toString());
+      setDecision(editingItem.decision);
+    }
+  }, [editingItem]);
+
+  const inferredHourlyRate = useMemo(() => {
+    if (!editingItem || editingItem.totalHoursDecimal === 0) return 0;
+    return editingItem.price / editingItem.totalHoursDecimal;
+  }, [editingItem]);
+
+  const handleSubmitEdit = async () => {
+    if (!editingItem || isSavingEdit) return;
+
+    const parsedPrice = parseFloat(price);
+    if (isNaN(parsedPrice) || parsedPrice <= 0) return;
+
+    setIsSavingEdit(true);
+
+    try {
+      const totalHoursDecimal = inferredHourlyRate > 0
+        ? parsedPrice / inferredHourlyRate
+        : editingItem.totalHoursDecimal;
+
+      await onEditItem(editingItem.id, {
+        productName: productName.trim() || t('item_unnamed'),
+        price: parsedPrice,
+        currency: editingItem.currency,
+        totalHoursDecimal,
+        decision,
+      });
+
+      setEditingItem(null);
+    } finally {
+      setIsSavingEdit(false);
+    }
+  };
 
   if (items.length === 0) {
     return (
@@ -83,11 +129,20 @@ export const History: React.FC<HistoryProps> = ({ items, onClearHistory }) => {
                 : 'border-emerald-500'
             }`}
           >
-            {/* Header: Name and Tag */}
+            {/* Header: Name, Edit Button and Tag */}
             <div className="flex items-start justify-between gap-2 mb-2">
-                <h4 className="font-semibold text-sm md:text-base text-slate-900 dark:text-white truncate flex-1">
-                    {item.productName || t('item_unnamed')}
-                </h4>
+                <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                    <h4 className="font-semibold text-sm md:text-base text-slate-900 dark:text-white truncate">
+                        {item.productName || t('item_unnamed')}
+                    </h4>
+                    <button
+                        aria-label={t('edit_history_item')}
+                        onClick={() => setEditingItem(item)}
+                        className="shrink-0 p-1 rounded-md text-slate-300 dark:text-slate-600 hover:text-slate-500 dark:hover:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                    >
+                        <Pencil size={12} />
+                    </button>
+                </div>
                 {item.decision === 'bought' ? (
                     <span className="shrink-0 px-1.5 md:px-2 py-0.5 bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 text-[9px] md:text-[10px] rounded-full font-bold uppercase tracking-wide">{t('tag_bought')}</span>
                 ) : (
@@ -114,6 +169,81 @@ export const History: React.FC<HistoryProps> = ({ items, onClearHistory }) => {
           </div>
         ))}
       </div>
+
+      {editingItem && (
+        <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-20">
+          <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-4 md:p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white">{t('edit_history_item')}</h3>
+              <button
+                onClick={() => !isSavingEdit && setEditingItem(null)}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <div className="space-y-1">
+                <label className="text-xs md:text-sm text-slate-600 dark:text-slate-400">{t('what_to_buy')}</label>
+                <input
+                  type="text"
+                  value={productName}
+                  onChange={(e) => setProductName(e.target.value)}
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-sm text-slate-900 dark:text-white"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs md:text-sm text-slate-600 dark:text-slate-400">{t('price_label')} ({editingItem.currency})</label>
+                <input
+                  type="number"
+                  inputMode="decimal"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-sm text-slate-900 dark:text-white"
+                />
+                <p className="text-[11px] text-slate-400">{t('edit_history_hint')}</p>
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-xs md:text-sm font-medium text-slate-600 dark:text-slate-400">{t('decision_label')}</p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setDecision('saved')}
+                    className={`flex-1 px-3 py-2 rounded-lg border text-sm font-semibold transition ${decision === 'saved' ? 'bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300' : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300'}`}
+                  >
+                    {t('tag_saved')}
+                  </button>
+                  <button
+                    onClick={() => setDecision('bought')}
+                    className={`flex-1 px-3 py-2 rounded-lg border text-sm font-semibold transition ${decision === 'bought' ? 'bg-rose-50 dark:bg-rose-900/30 border-rose-200 dark:border-rose-700 text-rose-700 dark:text-rose-300' : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300'}`}
+                  >
+                    {t('tag_bought')}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                onClick={() => setEditingItem(null)}
+                className="px-3 py-2 rounded-lg text-sm font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+                disabled={isSavingEdit}
+              >
+                {t('cancel')}
+              </button>
+              <button
+                onClick={handleSubmitEdit}
+                className="px-4 py-2 rounded-lg text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+                disabled={isSavingEdit}
+              >
+                {t('save_changes')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
