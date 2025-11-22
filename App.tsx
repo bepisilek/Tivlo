@@ -297,6 +297,51 @@ const App: React.FC = () => {
       }
   };
 
+  const handleEditItem = async (
+    originalItem: HistoryItem,
+    updatedData: { productName: string; price: number; decision: 'bought' | 'saved' }
+  ) => {
+    if (!session || !supabase) return;
+
+    try {
+      // Calculate new hours based on the updated price and current hourly rate
+      const hourlyRate = settings.monthlyNetSalary / (settings.weeklyHours * 4.33);
+      const newTotalHoursDecimal = updatedData.price / hourlyRate;
+
+      // Create a new entry instead of updating the existing one
+      const dbItem = {
+        user_id: session.user.id,
+        product_name: updatedData.productName || t('item_unnamed'),
+        price: updatedData.price,
+        currency: originalItem.currency,
+        total_hours_decimal: newTotalHoursDecimal,
+        decision: updatedData.decision,
+        advice_used: originalItem.adviceUsed,
+        date: new Date().toISOString()
+      };
+
+      const { data, error } = await supabase.from('history').insert(dbItem).select().single();
+
+      if (error) throw error;
+
+      if (data) {
+        const newItem: HistoryItem = {
+          id: data.id,
+          productName: data.product_name,
+          price: data.price,
+          currency: data.currency,
+          totalHoursDecimal: data.total_hours_decimal,
+          decision: data.decision,
+          date: data.date,
+          adviceUsed: data.advice_used
+        };
+        setHistory(prev => [newItem, ...prev]);
+      }
+    } catch (error) {
+      console.error('Error creating edited item:', error);
+    }
+  };
+
   const handleOpenProfile = () => {
       setPreviousView(viewState === ViewState.SETTINGS ? ViewState.CALCULATOR : viewState);
       setViewState(ViewState.SETTINGS);
@@ -447,7 +492,7 @@ const App: React.FC = () => {
                                 )}
 
                                 {viewState === ViewState.HISTORY && (
-                                    <History items={history} onClearHistory={handleClearHistory} />
+                                    <History items={history} onClearHistory={handleClearHistory} onEditItem={handleEditItem} />
                                 )}
 
                                 {viewState === ViewState.STATISTICS && (
