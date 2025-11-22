@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
-import { Lock, Sparkles, Brain, Target, Zap, Trophy } from 'lucide-react';
+import { Lock, Sparkles, Brain, Target, Zap, Trophy, HelpCircle } from 'lucide-react';
 import { WordleGame } from './WordleGame';
+import { DailyQuiz } from './DailyQuiz';
 
 interface ChallengesProps {}
 
@@ -37,10 +38,10 @@ export const Challenges: React.FC<ChallengesProps> = () => {
     },
     {
       id: 'quiz',
-      icon: Target,
+      icon: HelpCircle,
       titleKey: 'challenge_quiz_title',
       descKey: 'challenge_quiz_desc',
-      available: false,
+      available: true,
       color: 'purple'
     },
     {
@@ -137,6 +138,10 @@ export const Challenges: React.FC<ChallengesProps> = () => {
   // Show active game
   if (activeGame === 'wordle') {
     return <WordleGame onBack={() => setActiveGame(null)} />;
+  }
+
+  if (activeGame === 'quiz') {
+    return <DailyQuiz onBack={() => setActiveGame(null)} />;
   }
 
   return (
