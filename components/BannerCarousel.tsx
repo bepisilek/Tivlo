@@ -56,7 +56,7 @@ export const BannerCarousel: React.FC = () => {
 
   return (
     <div className="w-full px-4 py-2">
-      <div className="relative w-full overflow-hidden rounded-lg shadow-md" style={{ aspectRatio: '16 / 5' }}>
+      <div className="relative w-full overflow-hidden rounded-lg shadow-md" style={{ aspectRatio: '2 / 1' }}>
         {validBanners.map((banner, index) => (
           <img
             key={banner}
