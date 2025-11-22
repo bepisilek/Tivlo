@@ -241,8 +241,8 @@ export const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
 
   const getStatusColor = (status: LetterStatus) => {
     switch (status) {
-      case 'correct': return 'bg-emerald-500 border-emerald-500 text-white';
-      case 'present': return 'bg-amber-500 border-amber-500 text-white';
+      case 'correct': return 'bg-green-500 border-green-500 text-white';
+      case 'present': return 'bg-yellow-500 border-yellow-500 text-white';
       case 'absent': return 'bg-slate-500 dark:bg-slate-600 border-slate-500 dark:border-slate-600 text-white';
       default: return 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white';
     }
@@ -251,8 +251,8 @@ export const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
   const getKeyboardKeyColor = (key: string) => {
     const status = gameState.letterStatuses[key.toLowerCase()];
     switch (status) {
-      case 'correct': return 'bg-emerald-500 text-white border-emerald-500';
-      case 'present': return 'bg-amber-500 text-white border-amber-500';
+      case 'correct': return 'bg-green-500 text-white border-green-500';
+      case 'present': return 'bg-yellow-500 text-white border-yellow-500';
       case 'absent': return 'bg-slate-500 dark:bg-slate-600 text-white border-slate-500';
       default: return 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white border-slate-300 dark:border-slate-600';
     }
@@ -363,7 +363,7 @@ export const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
       {(gameState.gameStatus === 'won' || gameState.gameStatus === 'lost') && (
         <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
           <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 max-w-xs w-full shadow-xl border border-slate-200 dark:border-slate-700 text-center">
-            <h3 className={`text-2xl font-bold mb-2 ${gameState.gameStatus === 'won' ? 'text-emerald-500' : 'text-rose-500'}`}>
+            <h3 className={`text-2xl font-bold mb-2 ${gameState.gameStatus === 'won' ? 'text-green-500' : 'text-rose-500'}`}>
               {gameState.gameStatus === 'won' ? t('wordle_won') : t('wordle_lost')}
             </h3>
 
