@@ -11,6 +11,18 @@ interface SettingsFormProps {
   onCancel?: () => void;
 }
 
+// SECURITY: Input validation constants and sanitization function
+const MAX_CITY_LENGTH = 100;
+const MAX_SALARY = 1e9; // 1 billion
+const MAX_HOURS = 168; // Hours in a week
+const MAX_AGE = 150;
+
+const sanitizeTextInput = (input: string, maxLength: number): string => {
+  return input
+    .slice(0, maxLength)
+    .replace(/[<>]/g, ''); // Remove potential HTML injection characters
+};
+
 export const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, onSave, isFirstTime = false, onCancel }) => {
   const { t } = useLanguage();
   const [netSalary, setNetSalary] = useState<string>(initialSettings.monthlyNetSalary === 0 ? '' : initialSettings.monthlyNetSalary.toString());
@@ -26,7 +38,11 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, onS
     const hoursNum = parseFloat(hours);
     const ageNum = parseInt(age);
 
+    // SECURITY: Validate all inputs are within reasonable limits
     if (!salaryNum || !hoursNum || !ageNum || !city) return;
+    if (salaryNum <= 0 || salaryNum > MAX_SALARY) return;
+    if (hoursNum <= 0 || hoursNum > MAX_HOURS) return;
+    if (ageNum <= 0 || ageNum > MAX_AGE) return;
 
     setIsSaving(true);
     try {
@@ -90,7 +106,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings, onS
                             type="text"
                             required
                             value={city}
-                            onChange={(e) => setCity(e.target.value)}
+                            onChange={(e) => setCity(sanitizeTextInput(e.target.value, MAX_CITY_LENGTH))}
                             placeholder="Bp."
                             className="block w-full pl-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-3.5 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all shadow-sm"
                         />

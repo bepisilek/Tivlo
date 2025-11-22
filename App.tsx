@@ -160,8 +160,8 @@ const App: React.FC = () => {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth state change:', event, session);
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      // SECURITY: Do not log session data - it contains sensitive information
       setSession(session);
 
       // Handle password recovery event

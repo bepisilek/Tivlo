@@ -49,13 +49,23 @@ export const History: React.FC<HistoryProps> = ({ items, onClearHistory, onEditI
     });
   };
 
+  // SECURITY: Maximum price limit to prevent calculation errors and potential DoS
+  const MAX_PRICE = 1e10;
+  const MAX_PRODUCT_NAME_LENGTH = 100;
+
   const handleSaveEdit = () => {
     if (!editModal.item) return;
     const priceNum = parseFloat(editModal.price);
-    if (isNaN(priceNum) || priceNum <= 0) return;
+    // SECURITY: Validate price is within reasonable limits
+    if (isNaN(priceNum) || priceNum <= 0 || priceNum > MAX_PRICE) return;
+
+    // SECURITY: Sanitize product name - remove HTML tags and limit length
+    const sanitizedProductName = editModal.productName
+      .slice(0, MAX_PRODUCT_NAME_LENGTH)
+      .replace(/[<>]/g, '');
 
     onEditItem(editModal.item, {
-      productName: editModal.productName,
+      productName: sanitizedProductName,
       price: priceNum,
       decision: editModal.decision
     });
@@ -127,7 +137,11 @@ export const History: React.FC<HistoryProps> = ({ items, onClearHistory, onEditI
                   type="text"
                   inputMode="decimal"
                   value={editModal.price}
-                  onChange={(e) => setEditModal(prev => ({ ...prev, price: e.target.value.replace(/[^0-9.]/g, '') }))}
+                  onChange={(e) => {
+                    // SECURITY: Limit price input length and sanitize
+                    const sanitized = e.target.value.replace(/[^0-9.]/g, '').slice(0, 15);
+                    setEditModal(prev => ({ ...prev, price: sanitized }));
+                  }}
                   placeholder="0"
                   className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-lg font-bold text-slate-900 dark:text-white placeholder-slate-300 focus:ring-2 focus:ring-blue-500 outline-none"
                 />

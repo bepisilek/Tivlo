@@ -217,7 +217,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                     autoCorrect="off"
                     className="block w-full pl-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-4 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm"
                     placeholder={t('auth_password')}
-                    minLength={6}
+                    minLength={8}
                   />
                 </div>
                 
@@ -237,7 +237,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                         id="register-confirm-password"
                         className="block w-full pl-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-4 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm"
                         placeholder={t('auth_confirm_password')}
-                        minLength={6}
+                        minLength={8}
                       />
                     </div>
                     
