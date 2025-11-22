@@ -1,6 +1,6 @@
 import React from 'react';
 import { ViewState } from '../types';
-import { Calculator, History, Trophy } from 'lucide-react';
+import { Calculator, History, Trophy, Gamepad2 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 interface NavigationProps {
@@ -17,6 +17,7 @@ export const Navigation: React.FC<NavigationProps> = ({ currentView, onNavigate,
     { id: ViewState.CALCULATOR, icon: Calculator, label: t('nav_calculator') },
     { id: ViewState.HISTORY, icon: History, label: t('nav_history') },
     { id: ViewState.LEVELS, icon: Trophy, label: t('nav_levels') },
+    { id: ViewState.CHALLENGES, icon: Gamepad2, label: t('nav_challenges') },
   ];
 
   return (

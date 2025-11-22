@@ -37,14 +37,14 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ onComplete, onSt
       highlight: '25%' // Approximate position of 2nd tab
     },
     {
-      title: t('tour_stat_title'),
-      desc: t('tour_stat_desc'),
+      title: t('tour_level_title'),
+      desc: t('tour_level_desc'),
       position: 'bottom-right-center',
       highlight: '50%' // Approximate position of 3rd tab
     },
     {
-      title: t('tour_level_title'),
-      desc: t('tour_level_desc'),
+      title: t('tour_challenges_title'),
+      desc: t('tour_challenges_desc'),
       position: 'bottom-right',
       highlight: '75%' // Approximate position of 4th tab
     }
