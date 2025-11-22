@@ -19,6 +19,23 @@ interface FeedbackModalState {
     message: string;
 }
 
+// Security: Maximum length for product name to prevent DoS and storage issues
+const MAX_PRODUCT_NAME_LENGTH = 100;
+const MAX_PRICE_LENGTH = 15;
+
+// Security: Sanitize product name to prevent potential XSS in non-React contexts
+const sanitizeProductName = (input: string): string => {
+  return input
+    .slice(0, MAX_PRODUCT_NAME_LENGTH)
+    .replace(/[<>]/g, ''); // Remove potential HTML injection characters
+};
+
+// Security: Validate price input format
+const sanitizePriceInput = (input: string): string => {
+  // Only allow digits, decimal point, and minus (for scientific notation edge cases)
+  return input.slice(0, MAX_PRICE_LENGTH).replace(/[^0-9.]/g, '');
+};
+
 export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory }) => {
   const { t, language } = useLanguage();
   const [productName, setProductName] = useState('');
@@ -28,14 +45,25 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
   const [showCoinFlip, setShowCoinFlip] = useState(false);
   const [coinSuggestion, setCoinSuggestion] = useState<'bought' | 'saved' | null>(null);
 
-  // Hourly Rate Calculation
+  // Hourly Rate Calculation with validation
   const hourlyRate = useMemo(() => {
+    // Security: Validate settings to prevent division by zero and NaN propagation
+    if (!isFinite(settings.monthlyNetSalary) || !isFinite(settings.weeklyHours) ||
+        settings.weeklyHours <= 0 || settings.monthlyNetSalary < 0) {
+      return 0;
+    }
     return settings.monthlyNetSalary / (settings.weeklyHours * 4.33);
   }, [settings]);
 
+  // Maximum price limit (10 billion) to prevent overflow
+  const MAX_PRICE = 1e10;
+
   const handleCalculate = () => {
     const priceNum = parseFloat(price);
-    if (isNaN(priceNum) || priceNum <= 0) return;
+    // Security: Enhanced validation - check for NaN, Infinity, negative, zero, and max limit
+    if (isNaN(priceNum) || priceNum <= 0 || !isFinite(priceNum) || priceNum > MAX_PRICE) return;
+    // Security: Prevent calculation if hourlyRate is invalid
+    if (hourlyRate <= 0 || !isFinite(hourlyRate)) return;
 
     const totalHoursDecimal = priceNum / hourlyRate;
     const hours = Math.floor(totalHoursDecimal);
@@ -166,10 +194,7 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
          <p className="text-xs md:text-sm text-slate-500">{t('hourly_rate')}: <span className="font-mono font-bold text-slate-700 dark:text-slate-300">{hourlyRate.toFixed(0)} {settings.currency}</span></p>
       </div>
 
-      {/* Banner Carousel */}
-      <BannerCarousel />
-
-      <main className="flex-1 px-4 md:px-6 overflow-y-auto no-scrollbar py-4 pb-20 max-w-md mx-auto w-full">
+      <main className="flex-1 px-4 md:px-6 overflow-y-auto no-scrollbar py-4 pb-4 max-w-md mx-auto w-full">
         
         {/* Input Section */}
         <div className={`space-y-4 transition-all duration-500 ${result ? 'hidden' : 'opacity-100'}`}>
@@ -178,8 +203,9 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
                 <input
                     type="text"
                     value={productName}
-                    onChange={(e) => setProductName(e.target.value)}
+                    onChange={(e) => setProductName(sanitizeProductName(e.target.value))}
                     placeholder={t('placeholder_item')}
+                    maxLength={MAX_PRODUCT_NAME_LENGTH}
                     className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 md:p-4 text-sm md:text-base text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500 outline-none shadow-sm"
                 />
             </div>
@@ -188,11 +214,13 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
                 <label className="text-xs md:text-sm font-medium text-slate-600 dark:text-slate-400">{t('price_label')} ({settings.currency})</label>
                 <div className="relative">
                     <input
-                        type="number"
+                        type="text"
                         inputMode="decimal"
                         value={price}
-                        onChange={(e) => setPrice(e.target.value)}
+                        onChange={(e) => setPrice(sanitizePriceInput(e.target.value))}
                         placeholder="0"
+                        maxLength={MAX_PRICE_LENGTH}
+                        pattern="[0-9]*\.?[0-9]*"
                         className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 md:p-4 text-2xl md:text-3xl font-bold text-slate-900 dark:text-white placeholder-slate-300 focus:ring-2 focus:ring-blue-500 outline-none shadow-sm"
                     />
                     <div className="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
@@ -269,6 +297,11 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
           </div>
         )}
       </main>
+
+      {/* Banner Carousel - positioned at bottom, compact size for mobile */}
+      <div className="shrink-0 w-full max-w-md mx-auto">
+        <BannerCarousel />
+      </div>
     </div>
   );
 };

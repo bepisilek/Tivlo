@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 
 // Dynamically import all images from the carouselbanners folder
 // When new images are added to the folder, they will be included after rebuild
@@ -9,6 +9,7 @@ const bannerModules = import.meta.glob('/public/carouselbanners/*.{png,jpg,jpeg,
 
 export const BannerCarousel: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [failedImages, setFailedImages] = useState<Set<string>>(new Set());
 
   // Extract banner URLs from the imported modules
   const banners = useMemo(() => {
@@ -20,30 +21,49 @@ export const BannerCarousel: React.FC = () => {
       });
   }, []);
 
+  // Filter out failed images
+  const validBanners = useMemo(() => {
+    return banners.filter((banner) => !failedImages.has(banner));
+  }, [banners, failedImages]);
+
+  // Security: Handle image load errors gracefully
+  const handleImageError = useCallback((banner: string) => {
+    setFailedImages((prev) => new Set(prev).add(banner));
+  }, []);
+
   // Auto-rotate every 2.5 seconds
   useEffect(() => {
-    if (banners.length <= 1) return;
+    if (validBanners.length <= 1) return;
 
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % banners.length);
+      setCurrentIndex((prev) => (prev + 1) % validBanners.length);
     }, 2500);
 
     return () => clearInterval(interval);
-  }, [banners.length]);
+  }, [validBanners.length]);
 
-  // Don't render if no banners
-  if (banners.length === 0) {
+  // Reset index if it exceeds valid banners count
+  useEffect(() => {
+    if (currentIndex >= validBanners.length && validBanners.length > 0) {
+      setCurrentIndex(0);
+    }
+  }, [currentIndex, validBanners.length]);
+
+  // Don't render if no valid banners
+  if (validBanners.length === 0) {
     return null;
   }
 
   return (
-    <div className="w-full px-4 py-3">
-      <div className="relative w-full overflow-hidden rounded-xl shadow-lg" style={{ aspectRatio: '2 / 1' }}>
-        {banners.map((banner, index) => (
+    <div className="w-full px-4 py-2">
+      <div className="relative w-full overflow-hidden rounded-lg shadow-md" style={{ aspectRatio: '16 / 5' }}>
+        {validBanners.map((banner, index) => (
           <img
             key={banner}
             src={banner}
             alt={`Banner ${index + 1}`}
+            onError={() => handleImageError(banner)}
+            loading="lazy"
             className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
               index === currentIndex ? 'opacity-100' : 'opacity-0'
             }`}
@@ -51,15 +71,15 @@ export const BannerCarousel: React.FC = () => {
         ))}
 
         {/* Indicator dots */}
-        {banners.length > 1 && (
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
-            {banners.map((_, index) => (
+        {validBanners.length > 1 && (
+          <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex gap-1">
+            {validBanners.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentIndex(index)}
-                className={`w-2 h-2 rounded-full transition-all ${
+                className={`w-1.5 h-1.5 rounded-full transition-all ${
                   index === currentIndex
-                    ? 'bg-white w-4'
+                    ? 'bg-white w-3'
                     : 'bg-white/50 hover:bg-white/70'
                 }`}
                 aria-label={`Go to slide ${index + 1}`}
