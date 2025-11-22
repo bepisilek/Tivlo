@@ -234,8 +234,8 @@ export const Calculator: React.FC<CalculatorProps> = ({ settings, onSaveHistory 
                 <Play size={18} /> {t('calculate_btn')}
             </Button>
 
-            {/* Banner Carousel - positioned below calculate button */}
-            <div className="mt-4">
+            {/* Banner Carousel - positioned below calculate button, centered between button and navbar */}
+            <div className="mt-8">
               <BannerCarousel />
             </div>
         </div>

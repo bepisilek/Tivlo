@@ -1,15 +1,65 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { HistoryItem } from '../types';
-import { Trash2, TrendingUp, TrendingDown, ShoppingBag, Pencil } from 'lucide-react';
+import { Trash2, TrendingUp, TrendingDown, ShoppingBag, Pencil, X, Check } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { Button } from './Button';
+
+interface EditModalState {
+  isOpen: boolean;
+  item: HistoryItem | null;
+  productName: string;
+  price: string;
+  decision: 'bought' | 'saved';
+}
 
 interface HistoryProps {
   items: HistoryItem[];
   onClearHistory: () => void;
+  onEditItem: (originalItem: HistoryItem, updatedData: { productName: string; price: number; decision: 'bought' | 'saved' }) => void;
 }
 
-export const History: React.FC<HistoryProps> = ({ items, onClearHistory }) => {
+export const History: React.FC<HistoryProps> = ({ items, onClearHistory, onEditItem }) => {
   const { t } = useLanguage();
+  const [editModal, setEditModal] = useState<EditModalState>({
+    isOpen: false,
+    item: null,
+    productName: '',
+    price: '',
+    decision: 'saved'
+  });
+
+  const handleOpenEdit = (item: HistoryItem) => {
+    setEditModal({
+      isOpen: true,
+      item,
+      productName: item.productName,
+      price: item.price.toString(),
+      decision: item.decision
+    });
+  };
+
+  const handleCloseEdit = () => {
+    setEditModal({
+      isOpen: false,
+      item: null,
+      productName: '',
+      price: '',
+      decision: 'saved'
+    });
+  };
+
+  const handleSaveEdit = () => {
+    if (!editModal.item) return;
+    const priceNum = parseFloat(editModal.price);
+    if (isNaN(priceNum) || priceNum <= 0) return;
+
+    onEditItem(editModal.item, {
+      productName: editModal.productName,
+      price: priceNum,
+      decision: editModal.decision
+    });
+    handleCloseEdit();
+  };
 
   const totalSavedHours = items
     .filter(i => i.decision === 'saved')
@@ -36,6 +86,83 @@ export const History: React.FC<HistoryProps> = ({ items, onClearHistory }) => {
 
   return (
     <div className="h-full flex flex-col w-full relative">
+      {/* Edit Modal */}
+      {editModal.isOpen && editModal.item && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md animate-fade-in">
+          <div className="w-full max-w-sm bg-white dark:bg-slate-900 rounded-2xl p-5 shadow-xl border border-slate-200 dark:border-slate-700">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('edit_item')}</h3>
+              <button
+                onClick={handleCloseEdit}
+                className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              >
+                <X size={20} className="text-slate-500" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">{t('what_to_buy')}</label>
+                <input
+                  type="text"
+                  value={editModal.productName}
+                  onChange={(e) => setEditModal(prev => ({ ...prev, productName: e.target.value }))}
+                  placeholder={t('placeholder_item')}
+                  className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">{t('price_label')} ({editModal.item.currency})</label>
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={editModal.price}
+                  onChange={(e) => setEditModal(prev => ({ ...prev, price: e.target.value.replace(/[^0-9.]/g, '') }))}
+                  placeholder="0"
+                  className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-lg font-bold text-slate-900 dark:text-white placeholder-slate-300 focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">{t('decision_label')}</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => setEditModal(prev => ({ ...prev, decision: 'saved' }))}
+                    className={`p-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 font-semibold text-sm ${
+                      editModal.decision === 'saved'
+                        ? 'bg-emerald-100 dark:bg-emerald-600/30 border-emerald-400 text-emerald-700 dark:text-emerald-300'
+                        : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500'
+                    }`}
+                  >
+                    <Check size={16} />
+                    {t('tag_saved')}
+                  </button>
+                  <button
+                    onClick={() => setEditModal(prev => ({ ...prev, decision: 'bought' }))}
+                    className={`p-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 font-semibold text-sm ${
+                      editModal.decision === 'bought'
+                        ? 'bg-rose-100 dark:bg-rose-600/30 border-rose-400 text-rose-700 dark:text-rose-300'
+                        : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500'
+                    }`}
+                  >
+                    <X size={16} />
+                    {t('tag_bought')}
+                  </button>
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <Button onClick={handleSaveEdit} fullWidth>
+                  {t('save_as_new')}
+                </Button>
+                <p className="text-[10px] text-center text-slate-400 mt-2">{t('edit_creates_new')}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="p-3 md:p-4 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm sticky top-0 z-10 border-b border-slate-100 dark:border-slate-800 shrink-0">
 
         <div className="grid grid-cols-2 gap-2 md:gap-4 mb-2">
@@ -106,6 +233,7 @@ export const History: React.FC<HistoryProps> = ({ items, onClearHistory }) => {
                             {new Date(item.date).toLocaleDateString('hu-HU', { month: 'short', day: 'numeric' })}
                         </span>
                         <button
+                            onClick={() => handleOpenEdit(item)}
                             className={`p-1 rounded-md transition-colors ${
                                 item.decision === 'bought'
                                     ? 'text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/30'
