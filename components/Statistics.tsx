@@ -2,13 +2,14 @@ import React, { useState, useMemo } from 'react';
 import { HistoryItem } from '../types';
 import { Calendar } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { getPriceReference, Language } from '../utils/priceReferences';
 
 interface StatisticsProps {
   history: HistoryItem[];
 }
 
 export const Statistics: React.FC<StatisticsProps> = ({ history }) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const defaultEndDate = new Date().toISOString().split('T')[0];
   const defaultStartDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
@@ -94,6 +95,11 @@ export const Statistics: React.FC<StatisticsProps> = ({ history }) => {
                     <div className="text-xs md:text-sm text-emerald-600 dark:text-emerald-400 font-mono font-medium">
                         + {stats.savedMoney.toLocaleString()} {currency}
                     </div>
+                    {stats.savedMoney > 0 && getPriceReference(stats.savedMoney, language as Language) && (
+                        <div className="mt-2 pt-2 border-t border-emerald-200 dark:border-emerald-500/20 text-[10px] md:text-xs text-emerald-700 dark:text-emerald-300 italic">
+                            ≈ {getPriceReference(stats.savedMoney, language as Language)}
+                        </div>
+                    )}
                 </div>
 
                 <div className="bg-rose-50 dark:bg-rose-600/10 border border-rose-200 dark:border-rose-500/20 rounded-xl p-4 md:p-5">
@@ -104,6 +110,11 @@ export const Statistics: React.FC<StatisticsProps> = ({ history }) => {
                     <div className="text-xs md:text-sm text-rose-600 dark:text-rose-400 font-mono font-medium">
                         - {stats.spentMoney.toLocaleString()} {currency}
                     </div>
+                    {stats.spentMoney > 0 && getPriceReference(stats.spentMoney, language as Language) && (
+                        <div className="mt-2 pt-2 border-t border-rose-200 dark:border-rose-500/20 text-[10px] md:text-xs text-rose-700 dark:text-rose-300 italic">
+                            ≈ {getPriceReference(stats.spentMoney, language as Language)}
+                        </div>
+                    )}
                 </div>
             </div>
 
