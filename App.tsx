@@ -40,6 +40,7 @@ const App: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [previousView, setPreviousView] = useState<ViewState>(ViewState.CALCULATOR);
   const [showTour, setShowTour] = useState(false);
+  const [tourStep, setTourStep] = useState(0);
   const [session, setSession] = useState<any>(null);
 
   // Splash Screen Logic
@@ -234,6 +235,7 @@ const App: React.FC = () => {
 
   const handleTourComplete = () => {
       setShowTour(false);
+      setTourStep(0);
       localStorage.setItem(TOUR_KEY, 'true');
   };
 
@@ -434,7 +436,7 @@ const App: React.FC = () => {
             ) : (
                 <>
                     {showTour && viewState === ViewState.CALCULATOR && (
-                        <OnboardingTour onComplete={handleTourComplete} />
+                        <OnboardingTour onComplete={handleTourComplete} onStepChange={setTourStep} />
                     )}
 
                     <Sidebar
@@ -504,7 +506,7 @@ const App: React.FC = () => {
                                 )}
                             </div>
 
-                            <Navigation currentView={viewState} onNavigate={setViewState} isHighlighted={showTour} />
+                            <Navigation currentView={viewState} onNavigate={setViewState} isHighlighted={showTour} tourStep={showTour ? tourStep : undefined} />
                         </div>
                     )}
                 </>

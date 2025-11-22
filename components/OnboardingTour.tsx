@@ -1,15 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Button } from './Button';
 import { X } from 'lucide-react';
 
 interface OnboardingTourProps {
   onComplete: () => void;
+  onStepChange?: (step: number) => void;
 }
 
-export const OnboardingTour: React.FC<OnboardingTourProps> = ({ onComplete }) => {
+export const OnboardingTour: React.FC<OnboardingTourProps> = ({ onComplete, onStepChange }) => {
   const { t } = useLanguage();
   const [step, setStep] = useState(0);
+
+  // Notify parent about step changes
+  useEffect(() => {
+    onStepChange?.(step);
+  }, [step, onStepChange]);
 
   const steps = [
     {
