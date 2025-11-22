@@ -96,8 +96,10 @@ export const Statistics: React.FC<StatisticsProps> = ({ history }) => {
                         + {stats.savedMoney.toLocaleString()} {currency}
                     </div>
                     {stats.savedMoney > 0 && getPriceReference(stats.savedMoney, language as Language) && (
-                        <div className="mt-2 pt-2 border-t border-emerald-200 dark:border-emerald-500/20 text-[10px] md:text-xs text-emerald-700 dark:text-emerald-300 italic">
-                            ≈ {getPriceReference(stats.savedMoney, language as Language)}
+                        <div className="mt-3 pt-3 border-t border-emerald-200 dark:border-emerald-500/20 text-sm md:text-base text-emerald-700 dark:text-emerald-300 font-medium">
+                            {language === 'hu' ? 'Ez nagyjából ' : language === 'de' ? 'Das entspricht etwa ' : 'This is roughly '}
+                            {getPriceReference(stats.savedMoney, language as Language)}
+                            {language === 'hu' ? ' ára.' : language === 'de' ? '.' : ' worth.'}
                         </div>
                     )}
                 </div>
@@ -111,8 +113,10 @@ export const Statistics: React.FC<StatisticsProps> = ({ history }) => {
                         - {stats.spentMoney.toLocaleString()} {currency}
                     </div>
                     {stats.spentMoney > 0 && getPriceReference(stats.spentMoney, language as Language) && (
-                        <div className="mt-2 pt-2 border-t border-rose-200 dark:border-rose-500/20 text-[10px] md:text-xs text-rose-700 dark:text-rose-300 italic">
-                            ≈ {getPriceReference(stats.spentMoney, language as Language)}
+                        <div className="mt-3 pt-3 border-t border-rose-200 dark:border-rose-500/20 text-sm md:text-base text-rose-700 dark:text-rose-300 font-medium">
+                            {language === 'hu' ? 'Ez nagyjából ' : language === 'de' ? 'Das entspricht etwa ' : 'This is roughly '}
+                            {getPriceReference(stats.spentMoney, language as Language)}
+                            {language === 'hu' ? ' ára.' : language === 'de' ? '.' : ' worth.'}
                         </div>
                     )}
                 </div>
