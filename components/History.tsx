@@ -1,6 +1,6 @@
 import React from 'react';
 import { HistoryItem } from '../types';
-import { Trash2, TrendingUp, TrendingDown, ShoppingBag } from 'lucide-react';
+import { Trash2, TrendingUp, TrendingDown, ShoppingBag, Pencil } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 interface HistoryProps {
@@ -101,8 +101,21 @@ export const History: React.FC<HistoryProps> = ({ items, onClearHistory }) => {
                     <div className="text-xs md:text-sm text-slate-500 dark:text-slate-400 font-mono">
                         {item.price.toLocaleString()} {item.currency}
                     </div>
-                    <div className="text-[10px] md:text-xs text-slate-400">
-                        {new Date(item.date).toLocaleDateString('hu-HU', { month: 'short', day: 'numeric' })}
+                    <div className="flex items-center gap-2">
+                        <span className="text-[10px] md:text-xs text-slate-400">
+                            {new Date(item.date).toLocaleDateString('hu-HU', { month: 'short', day: 'numeric' })}
+                        </span>
+                        <button
+                            className={`p-1 rounded-md transition-colors ${
+                                item.decision === 'bought'
+                                    ? 'text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/30'
+                                    : 'text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/30'
+                            }`}
+                            title={t('edit')}
+                        >
+                            <Pencil size={12} className="md:hidden" />
+                            <Pencil size={14} className="hidden md:block" />
+                        </button>
                     </div>
                 </div>
                 <div className={`font-bold text-base md:text-lg ${

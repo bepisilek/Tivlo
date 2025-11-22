@@ -12,30 +12,41 @@ interface FallingClock {
 
 interface SplashScreenProps {
   onComplete: () => void;
+  isAppLoaded?: boolean;
 }
 
-export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
-  const [clocks, setClocks] = useState<FallingClock[]>([]);
+const MIN_SPLASH_DURATION = 1100; // 1.1 másodperc minimum
 
+export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete, isAppLoaded = false }) => {
+  const [clocks, setClocks] = useState<FallingClock[]>([]);
+  const [minTimeElapsed, setMinTimeElapsed] = useState(false);
+
+  // Generáljuk az órákat egyszer
   useEffect(() => {
-    // Generáljunk 15 random órát
     const generatedClocks: FallingClock[] = Array.from({ length: 15 }, (_, i) => ({
       id: i,
-      left: Math.random() * 100, // 0-100%
-      animationDelay: Math.random() * 2, // 0-2s késleltetés
-      animationDuration: 3 + Math.random() * 2, // 3-5s időtartam
-      size: 20 + Math.random() * 20, // 20-40px méret
-      rotation: Math.random() * 360 // random forgatás
+      left: Math.random() * 100,
+      animationDelay: Math.random() * 2,
+      animationDuration: 3 + Math.random() * 2,
+      size: 20 + Math.random() * 20,
+      rotation: Math.random() * 360
     }));
     setClocks(generatedClocks);
 
-    // 2.5 másodperc múlva továbblépünk
+    // Minimum 1.1 másodperc után jelezzük, hogy eltelt a minimum idő
     const timer = setTimeout(() => {
-      onComplete();
-    }, 2500);
+      setMinTimeElapsed(true);
+    }, MIN_SPLASH_DURATION);
 
     return () => clearTimeout(timer);
-  }, [onComplete]);
+  }, []);
+
+  // Ha eltelt a minimum idő ÉS az app betöltött, akkor befejezzük
+  useEffect(() => {
+    if (minTimeElapsed && isAppLoaded) {
+      onComplete();
+    }
+  }, [minTimeElapsed, isAppLoaded, onComplete]);
 
   return (
     // MÓDOSÍTVA: Sötét feketés-narancssárgás gradiens háttér
