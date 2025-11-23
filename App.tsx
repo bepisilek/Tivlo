@@ -135,14 +135,28 @@ const App: React.FC = () => {
       return;
     }
 
+    // Check if URL contains recovery parameters - if so, wait for onAuthStateChange
+    const hash = window.location.hash;
+    const hashParams = new URLSearchParams(hash.substring(1));
+    const urlParams = new URLSearchParams(window.location.search);
+    const isRecoveryUrl = hashParams.get('type') === 'recovery' || urlParams.get('type') === 'recovery';
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       if (session) {
-        fetchUserData(session.user.id);
-      } else {
+        // If this is a recovery URL, don't fetch user data yet - wait for PASSWORD_RECOVERY event
+        if (!isRecoveryUrl) {
+          fetchUserData(session.user.id);
+        } else {
+          setIsLoading(false);
+          setViewState(ViewState.RESET_PASSWORD);
+        }
+      } else if (!isRecoveryUrl) {
+        // Only show welcome if this is not a recovery URL (recovery URL will trigger onAuthStateChange)
         setIsLoading(false);
         setViewState(ViewState.WELCOME);
       }
+      // If isRecoveryUrl and no session yet, wait for onAuthStateChange to process the tokens
     });
 
     const {
@@ -150,8 +164,23 @@ const App: React.FC = () => {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       // SECURITY: Do not log session data - it contains sensitive information
       setSession(session);
+
+      // Handle password recovery event
+      if (event === 'PASSWORD_RECOVERY') {
+        setIsLoading(false);
+        setViewState(ViewState.RESET_PASSWORD);
+        // Clean up URL without losing the session
+        window.history.replaceState({}, document.title, window.location.pathname);
+        return;
+      }
+
       if (session) {
-        fetchUserData(session.user.id);
+        // Don't fetch user data if we're in password reset mode
+        if (viewState !== ViewState.RESET_PASSWORD) {
+          fetchUserData(session.user.id);
+        } else {
+          setIsLoading(false);
+        }
       } else {
         // Logged out
         setSettings(DEFAULT_SETTINGS);
@@ -164,18 +193,33 @@ const App: React.FC = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Detect password recovery from URL
+  // Detect password recovery from URL (fallback for edge cases)
   useEffect(() => {
+    const hash = window.location.hash;
     const urlParams = new URLSearchParams(window.location.search);
-    const hashParams = new URLSearchParams(window.location.hash.substring(1));
-    
-    const type = urlParams.get('type') || hashParams.get('type');
-    const accessToken = hashParams.get('access_token');
 
-    if (type === 'recovery' && accessToken) {
+    // Parse hash parameters (Supabase puts tokens in hash fragment)
+    const hashParams = new URLSearchParams(hash.substring(1));
+
+    const typeFromQuery = urlParams.get('type');
+    const typeFromHash = hashParams.get('type');
+    const accessToken = hashParams.get('access_token');
+    const errorDescription = hashParams.get('error_description');
+
+    // Check for error in the URL (e.g., expired recovery link)
+    if (errorDescription) {
+      console.error('Auth error from URL:', errorDescription);
+      window.history.replaceState({}, document.title, window.location.pathname);
+      return;
+    }
+
+    // If we have a recovery type and access token, the onAuthStateChange should handle it
+    // This is a fallback in case the event was missed
+    if ((typeFromQuery === 'recovery' || typeFromHash === 'recovery') && accessToken && session) {
       setViewState(ViewState.RESET_PASSWORD);
       window.history.replaceState({}, document.title, window.location.pathname);
-    } else if (type === 'signup' || (type === 'email' && accessToken)) {
+    } else if (typeFromHash === 'signup' || typeFromHash === 'email' || typeFromQuery === 'signup') {
+      // Email confirmation - clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, [session]);
@@ -438,7 +482,11 @@ const App: React.FC = () => {
       setViewState(ViewState.RESET_PASSWORD);
   };
 
-  const handleResetSuccess = () => {
+  const handleResetSuccess = async () => {
+      // After successful password reset, fetch user data if not already loaded
+      if (session && !settings.isSetup) {
+        await fetchUserData(session.user.id);
+      }
       setViewState(previousView === ViewState.RESET_PASSWORD ? ViewState.CALCULATOR : previousView);
   };
 
